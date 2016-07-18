@@ -84,3 +84,5 @@ for name in obj.keys():
                 wave3 = fh[key]
                 
         # Will now need 9 tables, for each wave and resolution
+        # When parsing an MR file the key to check for will be "NATIVE"
+        
