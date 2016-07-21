@@ -3,7 +3,7 @@ from os import path
 import argparse
 
 def statRetreive(line):
-  pos = [i for i,x in enumerate(line) if x == ':']
+  pos = [i for i, x in enumerate(line) if x == ':']
   return ' '.join(line[pos[0] + 1:])
 
 def lineCheck(wordlist, line):
@@ -20,7 +20,6 @@ parser.add_argument('--pdb_id', dest = 'pdb_id', type=str,
 
 parser.add_argument('--directory', dest = 'directory', type=str,
                     help='the pdb id directory', default = '/Users/dominicjaques/Documents/Diamond/PDB_coordinates')
-
 
 args = parser.parse_args()
 # Checks the input is sane.
@@ -157,39 +156,54 @@ pdb_data = {
 }
 
 print
+
 for item in pdb_data:
   try:
     print item + ':', pdb_data[item]
   except e as Exception:
     print e
+
 print
+
 # Inserts acquired information into relevant tables
   # Inserts pdb_id
 cur.executescript( '''
 INSERT OR IGNORE INTO PDB_id
 (pdb_id) VALUES ("%s");
-INSERT OR IGNORE INTO High_Res_Stats
-(pdb_id) VALUES ("%s");
-INSERT OR IGNORE INTO Low_Res_Stats
-(pdb_id) VALUES ("%s");
-INSERT OR IGNORE INTO Mid_Res_Stats
-(pdb_id) VALUES ("%s");
+
 INSERT OR IGNORE INTO PDB_id_Stats
-(pdb_id) VALUES ("%s")
-''' % (pdb_id, pdb_id, pdb_id, pdb_id, pdb_id ))
+(pdb_id_id)  SELECT id FROM PDB_id
+WHERE PDB_id.pdb_id="%s";
+INSERT OR IGNORE INTO High_Res_Stats
+(pdb_id_id)  SELECT id FROM PDB_id
+WHERE PDB_id.pdb_id="%s";
+INSERT OR IGNORE INTO Low_Res_Stats
+(pdb_id_id)  SELECT id FROM PDB_id
+WHERE PDB_id.pdb_id="%s";
+INSERT OR IGNORE INTO Mid_Res_Stats
+(pdb_id_id)  SELECT id FROM PDB_id
+WHERE PDB_id.pdb_id="%s";
+''' % (pdb_id, pdb_id, pdb_id, pdb_id, pdb_id,))
+
+cur.execute('''
+SELECT id FROM PDB_id WHERE pdb_id="%s" ''' % (pdb_id))
+pdb_pk = cur.fetchall()
+pdb_pk = pdb_pk[0][0]
 
   # Inserts pdb reference statistics
   # Adds necessary columns
 for data_names in pdb_data.keys():
-  cur.executescript('''
-  ALTER TABLE PDB_id_Stats ADD "%s" TEXT''' % (data_names) )
-
+  try:
+    cur.executescript('''
+    ALTER TABLE PDB_id_Stats ADD "%s" TEXT''' % (data_names) )
+  except:
+    pass
 items = len(pdb_data)
 
 for data in pdb_data:
   print data, pdb_data[data]
   cur.execute('''
   UPDATE PDB_id_Stats SET "%s" = "%s"
-  WHERE pdb_id = "%s" ''' % (data, pdb_data[data], pdb_id ))
-  
+  WHERE pdb_id_id = "%s" ''' % (data, pdb_data[data], pdb_pk ))
+
 conn.commit()
