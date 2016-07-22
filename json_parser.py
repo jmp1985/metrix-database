@@ -1,17 +1,21 @@
 import sqlite3
 import json
 import argparse
+'''
+parser = argparse.ArgumentParser(description='command line argument')
 
 parser.add_argument('--pdb_id', dest = 'pdb_id', type=str,
                     help='the pdb id', default = None)
-
+                    
 args = parser.parse_args()
 # Checks the input is sane.
 if args.pdb_id is None:
   print 'User must supply pdb_id.'
   exit (0)
 
-print(args.pdb_id)
+print(args.pdb_id)'''
+
+pdb_id = '4FO5'
 
 names = {
   'I/sigma' : 'IoverSigma',
@@ -40,14 +44,9 @@ names = {
 conn = sqlite3.connect('pdb_coordinates.sqlite')
 cur = conn.cursor()
 
-# pdb_id = raw_input('Enter the related pdb id: ')
-
 fn_xia2 = 'xia2.json'
 fh_xia2 = json.load(open(fn_xia2))
 result = {}
-pdb_id = "XXXX"
-
-# Selects the correct sweep id
 
 cur.execute('''
 SELECT id FROM PDB_id WHERE pdb_id="%s" ''' % (pdb_id))
@@ -116,44 +115,47 @@ value_list = []
 for wave in waves:
     for item in wave.values():
         for stat in item:
-            value_list.append(item[stat])
+            value_list.append(stat)
 
     cur.executescript('''
-    INSERT INTO SWEEPS
-    (pdb_id_id)  SELECT id FROM PDB_id
-    WHERE PDB_id.pdb_id="%s";
+    INSERT OR IGNORE INTO SWEEPS
+    (pdb_id_id) SELECT id FROM PDB_id
+    WHERE PDB_id.pdb_id="%s" ''' % (pdb_id))
 
-    SELECT id FROM PDB_id WHERE pdb_id="%s"
+    cur.execute('''
+    SELECT id FROM PDB_id WHERE PDB_id.pdb_id="%s"
     ''' % (pdb_id))
-    pdb_pk = (cur.fetchone())[0]
+    pdb_pk = cur.fetchone()
+    pdb_pk = pdb_pk[0]
 
     cur.executescript('''
-    SELECT id FROM SWEEPS WHERE pdb_id_id="%s"
+    SELECT id FROM SWEEPS WHERE SWEEPS.pdb_id_id=%s
     ''' % (pdb_pk))
-    sweep_pk = (cur.fetchone())[0]
+    sweep_pk = cur.fetchone()
+    print sweep_pk
     items = len(value_list)
 
     for name in stat_name_list:
-        
+        print name, sweep_pk
         cur.executescript('''
-        INSERT OR IGNORE INTO %s
-        (sweep_id) VALUES (%s)''' % (name, sweep_pk))
-        
+        UPDATE %s SET sweep_id = %s''' % (name, sweep_pk))
+
         count = 0
         for i in range(0, items):
             try:
                 cur.execute('''
                 UPDATE %s SET %s = %s
-                WHERE sweep_id = %s 
-                ''' % (name, names.values()[i], (value_list[i][count], sweep_pk))
+                WHERE sweep_id = %s
+                ''' % (name, names.values()[i], value_list[i][count], sweep_pk))
             except:
                 pass
         count += 1
-        
+
 cur.execute('''
 UPDATE PDB_id SET
 data_type = ? WHERE id = ?''', (data_type, pdb_id))
 
 conn.commit()
+
         # When parsing an MR file the key to check for will be "NATIVE"
         
