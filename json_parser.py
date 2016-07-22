@@ -1,5 +1,17 @@
 import sqlite3
 import json
+import argparse
+
+parser.add_argument('--pdb_id', dest = 'pdb_id', type=str,
+                    help='the pdb id', default = None)
+
+args = parser.parse_args()
+# Checks the input is sane.
+if args.pdb_id is None:
+  print 'User must supply pdb_id.'
+  exit (0)
+
+print(args.pdb_id)
 
 names = {
   'I/sigma' : 'IoverSigma',
@@ -28,17 +40,28 @@ names = {
 conn = sqlite3.connect('pdb_coordinates.sqlite')
 cur = conn.cursor()
 
-pdb_id = raw_input('Enter the related pdb id: ')
+# pdb_id = raw_input('Enter the related pdb id: ')
 
 fn_xia2 = 'xia2.json'
 fh_xia2 = json.load(open(fn_xia2))
 result = {}
+pdb_id = "XXXX"
+
+# Selects the correct sweep id
+
+cur.execute('''
+SELECT id FROM PDB_id WHERE pdb_id="%s" ''' % (pdb_id))
+pdb_pk = cur.fetchall()
+pdb_pk = pdb_pk[0][0]
+
 # Locates _scalr_statistics
 obj = fh_xia2["_crystals"]
 for name in obj.keys():
     data_type = obj[name]['_wavelengths']
+
     # Checks if SAD -> puts statistics into a single dictionary
     if 'SAD' in data_type.keys():
+        print 'SAD'
         data_type = 'SAD'
         result[name] = obj[name]['_scaler']['_scalr_statistics']['["AUTOMATIC", "%s", "SAD"]' % name]
 
@@ -70,19 +93,67 @@ for name in obj.keys():
         conn.commit()
         break
 
-    # Checks if MAD -> puts statistics into separate dictionaries for each sweep
-    if 'WAVE' in data_type.keys():
+
+stat_name_list = ['High_Res_Stats', 'Mid_Res_Stats', 'Low_Res_Stats']
+
+result = {}
+
+fh = fh_xia2["_crystals"]["DEFAULT"]["_scaler"]["_scalr_statistics"]
+for key in fh.keys():
+    if 'WAVE' in key: data_type = 'MAD'
+for i in fh:
+    if "WAVE" in i:
         data_type = 'MAD'
-        mad_dict = fh_xia2["_crystals"]["DEFAULT"]["_scaler"]["_scalr_statistics"]
-        for key in mad_dict:
-            print i
-            if "WAVE1" in key:
-                wave1 = fh[key]
-            if "WAVE2" in key:
-                wave2 = fh[key]
-            if "WAVE3" in key:
-                wave3 = fh[key]
-                
-        # Will now need 9 tables, for each wave and resolution
+    if "WAVE1" in i:
+        wave1 = fh[i]
+    if "WAVE2" in i:
+        wave2 = fh[i]
+    if "WAVE3" in i:
+        wave3 = fh[i]
+
+waves = [wave1, wave2, wave3]
+value_list = []
+for wave in waves:
+    for item in wave.values():
+        for stat in item:
+            value_list.append(item[stat])
+
+    cur.executescript('''
+    INSERT INTO SWEEPS
+    (pdb_id_id)  SELECT id FROM PDB_id
+    WHERE PDB_id.pdb_id="%s";
+
+    SELECT id FROM PDB_id WHERE pdb_id="%s"
+    ''' % (pdb_id))
+    pdb_pk = (cur.fetchone())[0]
+
+    cur.executescript('''
+    SELECT id FROM SWEEPS WHERE pdb_id_id="%s"
+    ''' % (pdb_pk))
+    sweep_pk = (cur.fetchone())[0]
+    items = len(value_list)
+
+    for name in stat_name_list:
+        
+        cur.executescript('''
+        INSERT OR IGNORE INTO %s
+        (sweep_id) VALUES (%s)''' % (name, sweep_pk))
+        
+        count = 0
+        for i in range(0, items):
+            try:
+                cur.execute('''
+                UPDATE %s SET %s = %s
+                WHERE sweep_id = %s 
+                ''' % (name, names.values()[i], (value_list[i][count], sweep_pk))
+            except:
+                pass
+        count += 1
+        
+cur.execute('''
+UPDATE PDB_id SET
+data_type = ? WHERE id = ?''', (data_type, pdb_id))
+
+conn.commit()
         # When parsing an MR file the key to check for will be "NATIVE"
         
