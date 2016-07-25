@@ -1,45 +1,44 @@
 import sqlite3
 import json
 import argparse
-'''
+
 parser = argparse.ArgumentParser(description='command line argument')
 
 parser.add_argument('--pdb_id', dest = 'pdb_id', type=str,
                     help='the pdb id', default = None)
-                    
+
 args = parser.parse_args()
 # Checks the input is sane.
 if args.pdb_id is None:
   print 'User must supply pdb_id.'
   exit (0)
 
-print(args.pdb_id)'''
+pdb_id = args.pdb_id
+print 'Parsing json for %s' % (pdb_id)
 
-pdb_id = '4FO5'
-
-names = {
-  'I/sigma' : 'IoverSigma',
-  'Completeness' : 'completeness',
-  'dI/s(dI)' : 'diffI',
-  'Rmerge(I+/-)' : 'RmergeIpim',
-  'Rmerge(I)' : 'RmergeI',
-  'Low resolution limit' : 'lowresolutionlimit',
-  'Rmeas(I)' : 'RmeasI',
-  'Anomalous slope' : 'anomalousslope',
-  'dF/F' : 'diffF',
-  'Wilson B factor' : 'wilsonbfactor',
-  'Rmeas(I+/-)' : 'RmeasIpim',
-  'High resolution limit' : ' highresolutionlimit',
-  'Rpim(I+/-)' : 'RpimIpim',
-  'Anomalous correlation' : 'anomalouscorrelation',
-  'Rpim(I)' : 'RpimI',
-  'Total observations' : 'totalobservations',
-  'Multiplicity' : 'multiplicity',
-  'Anomalous completeness' : 'anomalouscompleteness',
-  'CC half' : 'cchalf',
-  'Anomalous multiplicity' : 'anomalousmultiplicity',
-  'Total unique' : 'totalunique'
-}
+names = [
+  ['I/sigma' , 'IoverSigma'],
+  ['Completeness' , 'completeness'],
+  ['dI/s(dI)' , 'diffI'],
+  ['Rmerge(I+/-)' , 'RmergeIpim'],
+  ['Rmerge(I)' , 'RmergeI'],
+  ['Low resolution limit' , 'lowresolutionlimit'],
+  ['Rmeas(I)' , 'RmeasI'],
+  ['Anomalous slope' , 'anomalousslope'],
+  ['dF/F' , 'diffF'],
+  ['Wilson B factor' , 'wilsonbfactor'],
+  ['Rmeas(I+/-)' , 'RmeasIpim'],
+  ['High resolution limit' , ' highresolutionlimit'],
+  ['Rpim(I+/-)' , 'RpimIpim'],
+  ['Anomalous correlation' , 'anomalouscorrelation'],
+  ['Rpim(I)' , 'RpimI'],
+  ['Total observations' , 'totalobservations'],
+  ['Multiplicity' , 'multiplicity'],
+  ['Anomalous completeness' , 'anomalouscompleteness'],
+  ['CC half' , 'cchalf'],
+  ['Anomalous multiplicity' , 'anomalousmultiplicity'],
+  ['Total unique' , 'totalunique']
+]
 
 conn = sqlite3.connect('pdb_coordinates.sqlite')
 cur = conn.cursor()
@@ -47,11 +46,10 @@ cur = conn.cursor()
 fn_xia2 = 'xia2.json'
 fh_xia2 = json.load(open(fn_xia2))
 result = {}
-
 cur.execute('''
-SELECT id FROM PDB_id WHERE pdb_id="%s" ''' % (pdb_id))
-pdb_pk = cur.fetchall()
-pdb_pk = pdb_pk[0][0]
+SELECT id FROM PDB_id WHERE PDB_id.pdb_id="%s" ''' % (pdb_id))
+pdb_pk = cur.fetchone()
+pdb_pk = pdb_pk[0]
 
 # Locates _scalr_statistics
 obj = fh_xia2["_crystals"]
@@ -75,13 +73,13 @@ for name in obj.keys():
             try:
                 cur.execute('''
                 UPDATE High_Res_Stats SET {0} = ?
-                WHERE pdb_id = ? '''.format(names.values()[i]), (value_list[i][0], pdb_id))
+                WHERE pdb_id = ? '''.format(names[i][1]), (value_list[i][0], pdb_id))
                 cur.execute('''
                 UPDATE Low_Res_Stats SET {0} = ?
-                WHERE pdb_id = ? '''.format(names.values()[i]), (value_list[i][1], pdb_id))
+                WHERE pdb_id = ? '''.format(names[i][1]), (value_list[i][1], pdb_id))
                 cur.execute('''
                 UPDATE Mid_Res_Stats SET {0} = ?
-                WHERE pdb_id = ? '''.format(names.values()[i]), (value_list[i][2], pdb_id))
+                WHERE pdb_id = ? '''.format(names[i][1]), (value_list[i][2], pdb_id))
             except:
                 pass
 
@@ -111,51 +109,44 @@ for i in fh:
         wave3 = fh[i]
 
 waves = [wave1, wave2, wave3]
-value_list = []
+sweep_count = 0
 for wave in waves:
+    value_list = []
     for item in wave.values():
-        for stat in item:
-            value_list.append(stat)
+        value_list.append(item)
 
     cur.executescript('''
     INSERT OR IGNORE INTO SWEEPS
     (pdb_id_id) SELECT id FROM PDB_id
     WHERE PDB_id.pdb_id="%s" ''' % (pdb_id))
-
     cur.execute('''
     SELECT id FROM PDB_id WHERE PDB_id.pdb_id="%s"
     ''' % (pdb_id))
-    pdb_pk = cur.fetchone()
-    pdb_pk = pdb_pk[0]
+    pdb_pk = (cur.fetchone())[0] # .fetch returns a tuple that must be converted
 
-    cur.executescript('''
-    SELECT id FROM SWEEPS WHERE SWEEPS.pdb_id_id=%s
+    cur.execute('''
+    SELECT id FROM SWEEPS WHERE SWEEPS.pdb_id_id="%s"
     ''' % (pdb_pk))
-    sweep_pk = cur.fetchone()
-    print sweep_pk
-    items = len(value_list)
-
+    sweep_pk_list = cur.fetchall()
+    print sweep_pk_list[sweep_count][0]
     for name in stat_name_list:
-        print name, sweep_pk
-        cur.executescript('''
-        UPDATE %s SET sweep_id = %s''' % (name, sweep_pk))
+        cur.execute('''
+        INSERT INTO %s (sweep_id) VALUES (%s) ''' % (name, sweep_pk_list[sweep_count][0]))
 
+    items = len(value_list)
+    for i in range(0, items):
         count = 0
-        for i in range(0, items):
+        for name in stat_name_list:
             try:
                 cur.execute('''
                 UPDATE %s SET %s = %s
                 WHERE sweep_id = %s
-                ''' % (name, names.values()[i], value_list[i][count], sweep_pk))
-            except:
-                pass
-        count += 1
-
+                ''' % (name, names[i][1], value_list[i][count], sweep_pk_list[sweep_count][0]))
+                count += 1
+            except: count += 1
+    sweep_count += 1
 cur.execute('''
 UPDATE PDB_id SET
 data_type = ? WHERE id = ?''', (data_type, pdb_id))
 
 conn.commit()
-
-        # When parsing an MR file the key to check for will be "NATIVE"
-        
