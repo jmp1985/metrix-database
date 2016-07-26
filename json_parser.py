@@ -16,7 +16,7 @@ if args.pdb_id is None:
 pdb_id = args.pdb_id
 print 'Parsing json for %s' % (pdb_id)
 
-names = [
+names_of_statistics = [
   ['I/sigma' , 'IoverSigma'],
   ['Completeness' , 'completeness'],
   ['dI/s(dI)' , 'diffI'],
@@ -66,6 +66,16 @@ for name in obj.keys():
         for item in result.values():
             for stat in item:
                 value_list.append(item[stat])
+        number_of_sweeps = 1
+        cur.execute('''
+        INSERT OR IGNORE INTO SWEEPS
+        (pdb_id_id) SELECT id FROM PDB_id
+        WHERE PDB_id.pdb_id="%s" ''' % (pdb_id))
+        cur.execute('''
+        SELECT id FROM SWEEPS WHERE SWEEPS.pdb_id_id="%s"
+        ''' % (pdb_pk))
+        sweep_pk_list = cur.fetchall()[-number_of_sweeps:]
+        sweep_pk = sweep_pk_list[0]
 
         items = len(value_list)
 
@@ -73,67 +83,76 @@ for name in obj.keys():
             try:
                 cur.execute('''
                 UPDATE High_Res_Stats SET {0} = ?
-                WHERE pdb_id = ? '''.format(names[i][1]), (value_list[i][0], pdb_id))
+                WHERE sweep_id = ? '''.format(names_of_statistics[i][1]), (value_list[i][0], sweep_pk))
                 cur.execute('''
                 UPDATE Low_Res_Stats SET {0} = ?
-                WHERE pdb_id = ? '''.format(names[i][1]), (value_list[i][1], pdb_id))
+                WHERE sweep_id = ? '''.format(names_of_statistics[i][1]), (value_list[i][1], sweep_pk))
                 cur.execute('''
                 UPDATE Mid_Res_Stats SET {0} = ?
-                WHERE pdb_id = ? '''.format(names[i][1]), (value_list[i][2], pdb_id))
+                WHERE sweep_id = ? '''.format(names_of_statistics[i][1]), (value_list[i][2], sweep_pk))
             except:
                 pass
 
         cur.execute('''
         UPDATE PDB_id SET
-        data_type = ? WHERE id = ?''', (data_type, pdb_id))
+        data_type = ? WHERE id = ?''', (data_type, pdb_pk))
 
         conn.commit()
         break
 
-
 stat_name_list = ['High_Res_Stats', 'Mid_Res_Stats', 'Low_Res_Stats']
-
-result = {}
-
-fh = fh_xia2["_crystals"]["DEFAULT"]["_scaler"]["_scalr_statistics"]
-for key in fh.keys():
-    if 'WAVE' in key: data_type = 'MAD'
-for i in fh:
-    if "WAVE" in i:
-        data_type = 'MAD'
-    if "WAVE1" in i:
-        wave1 = fh[i]
-    if "WAVE2" in i:
-        wave2 = fh[i]
-    if "WAVE3" in i:
-        wave3 = fh[i]
-
-waves = [wave1, wave2, wave3]
+list_of_sweeps = []
 sweep_count = 0
-for wave in waves:
-    value_list = []
-    for item in wave.values():
-        value_list.append(item)
+wave1 = []
+wave2 = []
+wave3 = []
+wave4 = []
+wave5 = []
+fh_scalr = fh_xia2["_crystals"]["DEFAULT"]["_scaler"]["_scalr_statistics"]
+fh_wavelength = fh_xia2['_crystals']['DEFAULT']['_wavelengths']
+def waveCheck(wave_name, sweep_name, i):
+    if wave_name in i:
+        sweep_name = fh_scalr[i]
+        list_of_sweeps.append(sweep_name)
 
-    cur.executescript('''
+for key in fh_scalr.keys():
+    if 'WAVE' in key: data_type = 'MAD'
+for i in fh_scalr:
+    waveCheck('WAVE1', wave1, i)
+    waveCheck('WAVE2', wave2, i)
+    waveCheck('WAVE3', wave3, i)
+    waveCheck('WAVE4', wave4, i)
+    waveCheck('WAVE5', wave5, i)
+number_of_sweeps = len(list_of_sweeps)
+print number_of_sweeps
+for sweep in list_of_sweeps:
+    wavelength_of_sweep = fh_wavelength['%s' % ('WAVE' + str(sweep_count + 1))]['_wavelength']
+    sweep_stat_values = []
+    for stat in sweep.values():
+        sweep_stat_values.append(stat)
+
+    cur.execute('''
     INSERT OR IGNORE INTO SWEEPS
     (pdb_id_id) SELECT id FROM PDB_id
     WHERE PDB_id.pdb_id="%s" ''' % (pdb_id))
     cur.execute('''
-    SELECT id FROM PDB_id WHERE PDB_id.pdb_id="%s"
-    ''' % (pdb_id))
-    pdb_pk = (cur.fetchone())[0] # .fetch returns a tuple that must be converted
-
-    cur.execute('''
     SELECT id FROM SWEEPS WHERE SWEEPS.pdb_id_id="%s"
     ''' % (pdb_pk))
-    sweep_pk_list = cur.fetchall()
-    print sweep_pk_list[sweep_count][0]
+    sweep_pk_list = cur.fetchall()[-number_of_sweeps:]
+
     for name in stat_name_list:
         cur.execute('''
-        INSERT INTO %s (sweep_id) VALUES (%s) ''' % (name, sweep_pk_list[sweep_count][0]))
+        INSERT INTO %s (sweep_id) VALUES (%s) ''' % (name,
+        sweep_pk_list[sweep_count][0]))
 
-    items = len(value_list)
+
+    print wavelength_of_sweep
+    print sweep_pk_list[sweep_count][0]
+    cur.execute('''
+    UPDATE SWEEPS SET wavelength = %s WHERE id = "%s"
+    ''' % (wavelength_of_sweep, sweep_pk_list[sweep_count][0]))
+
+    items = len(sweep_stat_values)
     for i in range(0, items):
         count = 0
         for name in stat_name_list:
@@ -141,12 +160,16 @@ for wave in waves:
                 cur.execute('''
                 UPDATE %s SET %s = %s
                 WHERE sweep_id = %s
-                ''' % (name, names[i][1], value_list[i][count], sweep_pk_list[sweep_count][0]))
+                ''' % (name, names_of_statistics[i][1],
+                sweep_stat_values[i][count], sweep_pk_list[sweep_count][0]))
                 count += 1
             except: count += 1
+
     sweep_count += 1
+
+print pdb_pk
 cur.execute('''
 UPDATE PDB_id SET
-data_type = ? WHERE id = ?''', (data_type, pdb_id))
+data_type = ? WHERE id = ?''', (data_type, pdb_pk))
 
 conn.commit()
