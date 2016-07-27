@@ -40,6 +40,9 @@ names_of_statistics = [
   ['Total unique' , 'totalunique']
 ]
 
+stat_name_list = ['High_Res_Stats', 'Mid_Res_Stats', 'Low_Res_Stats']
+
+
 conn = sqlite3.connect('pdb_coordinates.sqlite')
 cur = conn.cursor()
 
@@ -48,8 +51,7 @@ fh_xia2 = json.load(open(fn_xia2))
 result = {}
 cur.execute('''
 SELECT id FROM PDB_id WHERE PDB_id.pdb_id="%s" ''' % (pdb_id))
-pdb_pk = cur.fetchone()
-pdb_pk = pdb_pk[0]
+pdb_pk = cur.fetchone()[0]
 
 # Locates _scalr_statistics
 obj = fh_xia2["_crystals"]
@@ -58,7 +60,6 @@ for name in obj.keys():
 
     # Checks if SAD -> puts statistics into a single dictionary
     if 'SAD' in data_type.keys():
-        print 'SAD'
         data_type = 'SAD'
         result[name] = obj[name]['_scaler']['_scalr_statistics']['["AUTOMATIC", "%s", "SAD"]' % name]
 
@@ -75,24 +76,26 @@ for name in obj.keys():
         SELECT id FROM SWEEPS WHERE SWEEPS.pdb_id_id="%s"
         ''' % (pdb_pk))
         sweep_pk_list = cur.fetchall()[-number_of_sweeps:]
-        sweep_pk = sweep_pk_list[0]
-
+        sweep_pk = sweep_pk_list[0][0]
         items = len(value_list)
-
+        for name in stat_name_list:
+            cur.execute('''
+            INSERT INTO %s (sweep_id) VALUES (%s) ''' % (name,
+            sweep_pk))
         for i in range(0, items):
+
             try:
                 cur.execute('''
-                UPDATE High_Res_Stats SET {0} = ?
-                WHERE sweep_id = ? '''.format(names_of_statistics[i][1]), (value_list[i][0], sweep_pk))
+                UPDATE High_Res_Stats SET %s = %s
+                WHERE sweep_id = %s ''' % (names_of_statistics[i][1], value_list[i][0], sweep_pk))
                 cur.execute('''
-                UPDATE Low_Res_Stats SET {0} = ?
-                WHERE sweep_id = ? '''.format(names_of_statistics[i][1]), (value_list[i][1], sweep_pk))
+                UPDATE Low_Res_Stats SET %s = %s
+                WHERE sweep_id = %s ''' % (names_of_statistics[i][1], value_list[i][1], sweep_pk))
                 cur.execute('''
-                UPDATE Mid_Res_Stats SET {0} = ?
-                WHERE sweep_id = ? '''.format(names_of_statistics[i][1]), (value_list[i][2], sweep_pk))
+                UPDATE Mid_Res_Stats SET %s = %s
+                WHERE sweep_id = %s ''' % (names_of_statistics[i][1], value_list[i][2], sweep_pk))
             except:
                 pass
-
         cur.execute('''
         UPDATE PDB_id SET
         data_type = ? WHERE id = ?''', (data_type, pdb_pk))
@@ -100,7 +103,6 @@ for name in obj.keys():
         conn.commit()
         break
 
-stat_name_list = ['High_Res_Stats', 'Mid_Res_Stats', 'Low_Res_Stats']
 list_of_sweeps = []
 sweep_count = 0
 wave1 = []
@@ -124,7 +126,6 @@ for i in fh_scalr:
     waveCheck('WAVE4', wave4, i)
     waveCheck('WAVE5', wave5, i)
 number_of_sweeps = len(list_of_sweeps)
-print number_of_sweeps
 for sweep in list_of_sweeps:
     wavelength_of_sweep = fh_wavelength['%s' % ('WAVE' + str(sweep_count + 1))]['_wavelength']
     sweep_stat_values = []
@@ -145,9 +146,6 @@ for sweep in list_of_sweeps:
         INSERT INTO %s (sweep_id) VALUES (%s) ''' % (name,
         sweep_pk_list[sweep_count][0]))
 
-
-    print wavelength_of_sweep
-    print sweep_pk_list[sweep_count][0]
     cur.execute('''
     UPDATE SWEEPS SET wavelength = %s WHERE id = "%s"
     ''' % (wavelength_of_sweep, sweep_pk_list[sweep_count][0]))
@@ -167,7 +165,6 @@ for sweep in list_of_sweeps:
 
     sweep_count += 1
 
-print pdb_pk
 cur.execute('''
 UPDATE PDB_id SET
 data_type = ? WHERE id = ?''', (data_type, pdb_pk))
