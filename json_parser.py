@@ -1,6 +1,7 @@
 import sqlite3
 import json
 import argparse
+import datetime
 
 parser = argparse.ArgumentParser(description='command line argument')
 
@@ -48,6 +49,11 @@ cur = conn.cursor()
 
 fn_xia2 = 'xia2.json'
 fh_xia2 = json.load(open(fn_xia2))
+fh_xia2_txt = open('xia2.txt')
+for line in fh_xia2_txt:
+    if line.startswith('DIALS'):
+        dials_verson = line[6:]
+
 result = {}
 cur.execute('''
 SELECT id FROM PDB_id WHERE PDB_id.pdb_id="%s" ''' % (pdb_id))
@@ -125,13 +131,16 @@ for i in fh_scalr:
     waveCheck('WAVE3', wave3, i)
     waveCheck('WAVE4', wave4, i)
     waveCheck('WAVE5', wave5, i)
+
 number_of_sweeps = len(list_of_sweeps)
 for sweep in list_of_sweeps:
+
     wavelength_of_sweep = fh_wavelength['%s' % ('WAVE' + str(sweep_count + 1))]['_wavelength']
     sweep_stat_values = []
     for stat in sweep.values():
         sweep_stat_values.append(stat)
 
+    # SETS UP SWEEP COLUMN FOR STATS AND DEV TABLE
     cur.execute('''
     INSERT OR IGNORE INTO SWEEPS
     (pdb_id_id) SELECT id FROM PDB_id
@@ -141,6 +150,27 @@ for sweep in list_of_sweeps:
     ''' % (pdb_pk))
     sweep_pk_list = cur.fetchall()[-number_of_sweeps:]
 
+    # INSERTS VALUES INTO DEV TABLE
+    cur.execute('''
+    INSERT INTO Dev_Stats_json (sweep_id) VALUES (%s) ''' % (
+    sweep_pk_list[sweep_count][0])
+    cur.execute('''
+    INSERT INTO Dev_Stats_json (date_time) VALUES (%s)
+    WHERE Dev_Stats_json.sweep_id=%s ''' % (str(datetime.datetime.today()),
+    sweep_pk_list[sweep_count][0]))
+    cur.execute('''
+    SELECT pdb_id_id FROM SWEEPS WHERE SWEEPS.pdb_id_id=%s ''' % (pdb_pk))
+    number_of_executions = len(cur.fetchall())
+    cur.execute('''
+    INSERT INTO Dev_Stats_json (execution_number) VALUES (%s)
+    WHERE Dev_Stats_json.sweep_id=%s ''' % (
+    number_of_executions + 1, sweep_pk_list[sweep_count][0]))
+    cur.execute('''
+    INSERT INTO Dev_Stats_json (dials_verson) VALUES (%s)
+    WHERE Dev_Stats_json.sweep_id=%s ''' % (dials_verson,
+    sweep_pk_list[sweep_count][0])))
+
+    # Inserts foreign key into stat tables for reference
     for name in stat_name_list:
         cur.execute('''
         INSERT INTO %s (sweep_id) VALUES (%s) ''' % (name,
@@ -150,6 +180,7 @@ for sweep in list_of_sweeps:
     UPDATE SWEEPS SET wavelength = %s WHERE id = "%s"
     ''' % (wavelength_of_sweep, sweep_pk_list[sweep_count][0]))
 
+    # Loops through stat list and inserts stats into each resolution table
     items = len(sweep_stat_values)
     for i in range(0, items):
         count = 0
