@@ -2,11 +2,17 @@ import sqlite3
 import json
 import argparse
 import datetime
+from os import path
+from os.path import isfile, join
+
 
 parser = argparse.ArgumentParser(description='command line argument')
 
 parser.add_argument('--pdb_id', dest = 'pdb_id', type=str,
                     help='the pdb id', default = None)
+
+parser.add_argument('--directory', dest = 'directory', type=str,
+                    help='the pdb id directory', default = '/Users/dominicjaques/Documents/Diamond/PDB_coordinates')
 
 args = parser.parse_args()
 # Checks the input is sane.
@@ -47,12 +53,22 @@ stat_name_list = ['High_Res_Stats', 'Mid_Res_Stats', 'Low_Res_Stats']
 conn = sqlite3.connect('pdb_coordinates.sqlite')
 cur = conn.cursor()
 
-fn_xia2 = 'xia2.json'
-fh_xia2 = json.load(open(fn_xia2))
-fh_xia2_txt = open('xia2.txt')
-for line in fh_xia2_txt:
-    if line.startswith('DIALS'):
-        dials_verson = line[6:]
+json_filename = 'xia2.json'
+fn_pdbid = path.join(args.directory, json_filename)
+try:
+    fh_xia2 = json.load(open(fn_pdbid))
+except:
+    print 'Cannot find %s' % (json_filename)
+    exit(0)
+xia2_txt_filename = 'xia2.txt'
+fn_txt = path.join(args.directory, xia2_txt_filename)
+try:
+    fh_xia2_txt = open(fn_txt)
+    for line in fh_xia2_txt:
+        if line.startswith('DIALS'):
+            dials_version = line[6:]
+except:
+    print 'Cannot find %s' % (fn_xia2_txt)
 
 result = {}
 cur.execute('''
@@ -88,8 +104,8 @@ for name in obj.keys():
             cur.execute('''
             INSERT INTO %s (sweep_id) VALUES (%s) ''' % (name,
             sweep_pk))
-        for i in range(0, items):
 
+        for i in range(0, items):
             try:
                 cur.execute('''
                 UPDATE High_Res_Stats SET %s = %s
@@ -100,8 +116,26 @@ for name in obj.keys():
                 cur.execute('''
                 UPDATE Mid_Res_Stats SET %s = %s
                 WHERE sweep_id = %s ''' % (names_of_statistics[i][1], value_list[i][2], sweep_pk))
-            except:
-                pass
+            except: pass
+        cur.execute('''
+        INSERT INTO Dev_Stats_json (sweep_id) VALUES (%s) ''' % (
+        sweep_pk))
+        cur.execute('''
+        UPDATE Dev_Stats_json SET date_time = "%s"
+        WHERE Dev_Stats_json.sweep_id= "%s" ''' % (str(datetime.datetime.today()),
+        sweep_pk))
+        cur.execute('''
+        SELECT pdb_id_id FROM SWEEPS WHERE SWEEPS.pdb_id_id=%s ''' % (pdb_pk))
+        number_of_executions = len(cur.fetchall())
+        cur.execute('''
+        UPDATE Dev_Stats_json SET execution_number = "%s"
+        WHERE Dev_Stats_json.sweep_id="%s" ''' % (
+        number_of_executions, sweep_pk))
+        cur.execute('''
+        UPDATE Dev_Stats_json SET dials_version ="%s"
+        WHERE Dev_Stats_json.sweep_id="%s" ''' % (dials_version,
+        sweep_pk))
+
         cur.execute('''
         UPDATE PDB_id SET
         data_type = ? WHERE id = ?''', (data_type, pdb_pk))
@@ -152,8 +186,8 @@ for sweep in list_of_sweeps:
 
     # INSERTS VALUES INTO DEV TABLE
     cur.execute('''
-    INSERT INTO Dev_Stats_json (sweep_id) VALUES (%s) ''' % (
-    sweep_pk_list[sweep_count][0])
+    INSERT OR IGNORE INTO Dev_Stats_json (sweep_id) VALUES (%s) ''' % (
+    sweep_pk_list[sweep_count][0]))
     cur.execute('''
     INSERT INTO Dev_Stats_json (date_time) VALUES (%s)
     WHERE Dev_Stats_json.sweep_id=%s ''' % (str(datetime.datetime.today()),
@@ -164,11 +198,11 @@ for sweep in list_of_sweeps:
     cur.execute('''
     INSERT INTO Dev_Stats_json (execution_number) VALUES (%s)
     WHERE Dev_Stats_json.sweep_id=%s ''' % (
-    number_of_executions + 1, sweep_pk_list[sweep_count][0]))
+    number_of_executions, sweep_pk_list[sweep_count][0]))
     cur.execute('''
-    INSERT INTO Dev_Stats_json (dials_verson) VALUES (%s)
-    WHERE Dev_Stats_json.sweep_id=%s ''' % (dials_verson,
-    sweep_pk_list[sweep_count][0])))
+    INSERT INTO Dev_Stats_json (dials_version) VALUES (%s)
+    WHERE Dev_Stats_json.sweep_id=%s ''' % (dials_version,
+    sweep_pk_list[sweep_count][0]))
 
     # Inserts foreign key into stat tables for reference
     for name in stat_name_list:
