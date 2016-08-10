@@ -1,6 +1,7 @@
 import sqlite3
 import sys
 import os.path
+
 conn = sqlite3.connect('pdb_coordinates.sqlite')
 cur = conn.cursor()
 
@@ -49,17 +50,17 @@ CREATE TABLE Mid_Res_Stats (
 );
 
 CREATE TABLE Dev_Stats_PDB (
-    sweep_id INTEGER,
+    pdb_id_id INTEGER,
     date_time TEXT,
     execution_number INTEGER,
-    FOREIGN KEY (sweep_id) REFERENCES SWEEP(id)
+    FOREIGN KEY (pdb_id_id) REFERENCES SWEEP(id)
 );
 
 CREATE TABLE Dev_Stats_json (
     sweep_id INTEGER,
     date_time TEXT,
     execution_number INTEGER,
-    dials_verson TEXT,
+    dials_version TEXT,
     FOREIGN KEY (sweep_id) REFERENCES SWEEP(id)
 )
 ''')
