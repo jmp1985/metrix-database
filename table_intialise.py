@@ -10,7 +10,7 @@ DROP TABLE IF EXISTS PDB_id;
 DROP TABLE IF EXISTS PDB_id_Stats;
 DROP TABLE IF EXISTS High_Res_Stats;
 DROP TABLE IF EXISTS Low_Res_Stats;
-DROP TABLE IF EXISTS Mid_Res_Stats;
+DROP TABLE IF EXISTS Overall_Res_Stats;
 DROP TABLE IF EXISTS SWEEPS;
 DROP TABLE IF EXISTS Dev_Stats_PDB;
 DROP TABLE IF EXISTS Dev_Stats_json;
@@ -44,7 +44,7 @@ CREATE TABLE Low_Res_Stats (
     sweep_id INTEGER,
     FOREIGN KEY (sweep_id) REFERENCES SWEEP(id));
 
-CREATE TABLE Mid_Res_Stats (
+CREATE TABLE Overall_Res_Stats (
     sweep_id INTEGER,
     FOREIGN KEY (sweep_id) REFERENCES SWEEP(id)
 );
@@ -95,6 +95,6 @@ for stat in names.values():
     cur.executescript('''
     ALTER TABLE High_Res_Stats ADD {0} TEXT;
     ALTER TABLE Low_Res_Stats ADD {0} TEXT;
-    ALTER TABLE Mid_Res_Stats ADD {0} TEXT'''.format(stat))
+    ALTER TABLE Overall_Res_Stats ADD {0} TEXT'''.format(stat))
 
 print 'Tables have been initialised.'
