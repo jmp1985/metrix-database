@@ -61,16 +61,15 @@ for line in pdb_fh:
 
     print 'Parsing json for %s' % (pdb_id)
 
-
     json_filename = 'xia2.json'
-    fn_pdbid = path.join(args.directory, json_filename)
+    fn_pdbid = path.join(args.directory, pdb_id, json_filename)
     try:
         fh_xia2 = json.load(open(fn_pdbid))
     except:
         print 'Cannot find %s' % (json_filename)
         exit(0)
     xia2_txt_filename = 'xia2.txt'
-    fn_txt = path.join(args.directory, xia2_txt_filename)
+    fn_txt = path.join(args.directory, pdb_id, xia2_txt_filename)
     try:
         fh_xia2_txt = open(fn_txt)
         for line in fh_xia2_txt:
