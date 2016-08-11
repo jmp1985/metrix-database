@@ -25,8 +25,6 @@ def anomalyCheck(anomalies):
         else:
             print 'Invaid entry for %s' % anomaly[0]
 
-
-
 anomalies = [
     ['Anomaly1', raw_input('Anomaly1 (y/n)')],
     ['Anomaly2', raw_input('Anomaly2 (y/n)')],
