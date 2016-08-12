@@ -13,7 +13,10 @@ pdb_list =  listdir(args.directory)
 
 pdb_id_list = []
 for pdb in pdb_list:
-    pdb_id_list.append(pdb[0:4])
+    if len(pdb) == 4:
+        pdb_id_list.append(pdb)
+    else: 
+        continue
 
 for pdb in pdb_id_list:
     print pdb
