@@ -28,7 +28,7 @@ parser.add_argument('--pdb_id', dest = 'pdb_id', type=str,
                     help='the pdb id', default = None)
 '''
 parser.add_argument('--directory', dest = 'directory', type=str,
-                    help='the pdb id directory', default = '/Users/dominicjaques/Documents/Diamond/PDB_coordinates')
+                    help='the pdb id directory', default = '/dls/mx-scratch/melanie/for_METRIX/JCSG_SAD_data_rerun9')
 
 
 args = parser.parse_args()
