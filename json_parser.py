@@ -149,7 +149,7 @@ for line in pdb_fh:
             data_type = ? WHERE id = ?''', (data_type, pdb_pk))
             print 'SAD data input for %s completed.' % (pdb_id)
             conn.commit()
-            exit(0)
+    continue
 
     list_of_sweeps = []
     sweep_count = 0
