@@ -28,7 +28,7 @@ parser.add_argument('--pdb_id', dest = 'pdb_id', type=str,
                     help='the pdb id', default = None)
 '''
 parser.add_argument('--directory', dest = 'directory', type=str,
-                    help='the pdb id directory', default = '/dls/mx-scratch/melanie/for_METRIX/JCSG_SAD_data_rerun9')
+                    help='the pdb id directory', default = '/dls/mx-scratch/sse87232/PDB_coordinates')
 
 
 args = parser.parse_args()
@@ -37,7 +37,6 @@ args = parser.parse_args()
 if args.pdb_id is None:
   print 'User must supply pdb_id.'
   exit (0)
-
 print(args.pdb_id)'''
 
 conn = sqlite3.connect('pdb_coordinates.sqlite')
@@ -193,7 +192,6 @@ for line in pdb_fh:
     cur.executescript( '''
     INSERT OR IGNORE INTO PDB_id
     (pdb_id) VALUES ("%s");
-
     INSERT OR IGNORE INTO PDB_id_Stats
     (pdb_id_id)  SELECT id FROM PDB_id
     WHERE PDB_id.pdb_id="%s";
