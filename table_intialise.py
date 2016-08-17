@@ -14,19 +14,15 @@ DROP TABLE IF EXISTS Overall_Res_Stats;
 DROP TABLE IF EXISTS SWEEPS;
 DROP TABLE IF EXISTS Dev_Stats_PDB;
 DROP TABLE IF EXISTS Dev_Stats_json;
-
-
 CREATE TABLE PDB_id (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     pdb_id  TEXT UNIQUE,
     data_type TEXT
 );
-
 CREATE TABLE PDB_id_Stats (
     pdb_id_id INTEGER,
     FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
 );
-
 CREATE TABLE SWEEPS (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     pdb_id_id INTEGER,
@@ -34,28 +30,23 @@ CREATE TABLE SWEEPS (
     sweep_number INTEGER,
     FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
 );
-
 CREATE TABLE High_Res_Stats (
     sweep_id INTEGER,
     FOREIGN KEY (sweep_id) REFERENCES SWEEP(id)
 );
-
 CREATE TABLE Low_Res_Stats (
     sweep_id INTEGER,
     FOREIGN KEY (sweep_id) REFERENCES SWEEP(id));
-
 CREATE TABLE Overall_Res_Stats (
     sweep_id INTEGER,
     FOREIGN KEY (sweep_id) REFERENCES SWEEP(id)
 );
-
 CREATE TABLE Dev_Stats_PDB (
     pdb_id_id INTEGER,
     date_time TEXT,
     execution_number INTEGER,
     FOREIGN KEY (pdb_id_id) REFERENCES SWEEP(id)
 );
-
 CREATE TABLE Dev_Stats_json (
     sweep_id INTEGER,
     date_time TEXT,
