@@ -28,7 +28,7 @@ parser.add_argument('--pdb_id', dest = 'pdb_id', type=str,
                     help='the pdb id', default = None)
 '''
 parser.add_argument('--directory', dest = 'directory', type=str,
-                    help='the pdb id directory', default = '/dls/mx-scratch/sse87232/PDB_coordinates')
+                    help='the pdb id directory', default = '/dls/mx-scratch/jcsg-data/PDB_coordinates')
 
 
 args = parser.parse_args()
