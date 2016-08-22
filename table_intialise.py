@@ -12,6 +12,8 @@ DROP TABLE IF EXISTS High_Res_Stats;
 DROP TABLE IF EXISTS Low_Res_Stats;
 DROP TABLE IF EXISTS Overall_Res_Stats;
 DROP TABLE IF EXISTS SWEEPS;
+DROP TABLE IF EXISTS Phasing_Success;
+
 DROP TABLE IF EXISTS Dev_Stats_PDB;
 DROP TABLE IF EXISTS Dev_Stats_json;
 CREATE TABLE PDB_id (
@@ -53,7 +55,13 @@ CREATE TABLE Dev_Stats_json (
     execution_number INTEGER,
     dials_version TEXT,
     FOREIGN KEY (sweep_id) REFERENCES SWEEP(id)
-)
+);
+CREATE TABLE Phasing_Success (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+    success INTEGER,
+    pdb_id_id INTEGER,
+    FOREIGN KEY(pdb_id_id) REFERENCES PDB_id(id)
+    )
 ''')
 
 names = {
