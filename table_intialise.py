@@ -10,10 +10,8 @@ DROP TABLE IF EXISTS PDB_id;
 DROP TABLE IF EXISTS PDB_id_Stats;
 DROP TABLE IF EXISTS High_Res_Stats;
 DROP TABLE IF EXISTS Low_Res_Stats;
-DROP TABLE IF EXISTS Overall_Res_Stats;
+DROP TABLE IF EXISTS Overall_Stats;
 DROP TABLE IF EXISTS SWEEPS;
-DROP TABLE IF EXISTS Phasing_Success;
-
 DROP TABLE IF EXISTS Dev_Stats_PDB;
 DROP TABLE IF EXISTS Dev_Stats_json;
 CREATE TABLE PDB_id (
@@ -39,7 +37,7 @@ CREATE TABLE High_Res_Stats (
 CREATE TABLE Low_Res_Stats (
     sweep_id INTEGER,
     FOREIGN KEY (sweep_id) REFERENCES SWEEP(id));
-CREATE TABLE Overall_Res_Stats (
+CREATE TABLE Overall_Stats (
     sweep_id INTEGER,
     FOREIGN KEY (sweep_id) REFERENCES SWEEP(id)
 );
@@ -55,13 +53,7 @@ CREATE TABLE Dev_Stats_json (
     execution_number INTEGER,
     dials_version TEXT,
     FOREIGN KEY (sweep_id) REFERENCES SWEEP(id)
-);
-CREATE TABLE Phasing_Success (
-    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    success INTEGER,
-    pdb_id_id INTEGER,
-    FOREIGN KEY(pdb_id_id) REFERENCES PDB_id(id)
-    )
+)
 ''')
 
 names = {
@@ -76,7 +68,7 @@ names = {
   'dF/F' : 'diffF',
   'Wilson B factor' : 'wilsonbfactor',
   'Rmeas(I+/-)' : 'RmeasIpim',
-  'High resolution limit' : ' highresolutionlimit',
+  'High resolution limit' : 'highresolutionlimit',
   'Rpim(I+/-)' : 'RpimIpim',
   'Anomalous correlation' : 'anomalouscorrelation',
   'Rpim(I)' : 'RpimI',
@@ -87,13 +79,12 @@ names = {
   'Anomalous multiplicity' : 'anomalousmultiplicity',
   'Total unique' : 'totalunique'
 }
-# Completeness only has a value for High_Res_Stats
 
 
 for stat in names.values():
     cur.executescript('''
     ALTER TABLE High_Res_Stats ADD {0} TEXT;
     ALTER TABLE Low_Res_Stats ADD {0} TEXT;
-    ALTER TABLE Overall_Res_Stats ADD {0} TEXT'''.format(stat))
+    ALTER TABLE Overall_Stats ADD {0} TEXT'''.format(stat))
 
 print 'Tables have been initialised.'
