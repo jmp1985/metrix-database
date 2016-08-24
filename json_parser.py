@@ -46,7 +46,7 @@ names_of_statistics = [
   ['Total unique' , 'totalunique']
 ]
 
-stat_name_list = ['Overall_Res_Stats', 'High_Res_Stats', 'Low_Res_Stats']
+stat_name_list = ['Overall_Stats', 'High_Res_Stats', 'Low_Res_Stats']
 
 
 conn = sqlite3.connect('pdb_coordinates.sqlite')
@@ -59,6 +59,7 @@ for line in pdb_fh:
     pdb_id = line
 
     output.write('Parsing json for %s \n' % (pdb_id))
+    print 'Parsing json for %s ' % (pdb_id)
 
     json_filename = 'xia2.json'
     fn_pdbid = path.join(args.directory, pdb_id, json_filename)
@@ -66,6 +67,7 @@ for line in pdb_fh:
         fh_xia2 = json.load(open(fn_pdbid))
     except:
         output.write('Cannot find %s for %s \n' % (json_filename, pdb_id))
+        print 'Cannot find %s for %s ' % (json_filename, pdb_id)
         continue
     xia2_txt_filename = 'xia2.txt'
     fn_txt = path.join(args.directory, pdb_id, xia2_txt_filename)
@@ -76,6 +78,7 @@ for line in pdb_fh:
                 dials_version = line[6:]
     except:
         output.write('Cannot find %s for %s \n' % (fn_xia2_txt, pdb_id))
+        print 'Cannot find %s for %s ' % (fn_xia2_txt, pdb_id)
 
     result = {}
     cur.execute('''
@@ -88,6 +91,7 @@ for line in pdb_fh:
     directory_contents = listdir(directory_path)
     if 'DataFiles' not in directory_contents:
         output.write('Cannot find "DataFiles" in directory for %s \n' % (pdb_id))
+        print 'Cannot find "DataFiles" in directory for %s ' % (pdb_id)
         continue
     for name in obj.keys():
         sad_check = obj[name]['_wavelengths']
@@ -126,7 +130,7 @@ for line in pdb_fh:
                     UPDATE Low_Res_Stats SET %s = %s
                     WHERE sweep_id = %s ''' % (names_of_statistics[i][1], value_list[i][2], sweep_pk))
                     cur.execute('''
-                    UPDATE Overall_Res_Stats SET %s = %s
+                    UPDATE Overall_Stats SET %s = %s
                     WHERE sweep_id = %s ''' % (names_of_statistics[i][1], value_list[i][0], sweep_pk))
                 except: pass
             cur.execute('''
@@ -152,6 +156,7 @@ for line in pdb_fh:
             UPDATE PDB_id SET
             data_type = ? WHERE id = ?''', (data_type, pdb_pk))
             output.write('MR data input for %s completed. \n' % (pdb_id))
+            print 'MR data input for %s completed. ' % (pdb_id)
             conn.commit()
             continue 
             
@@ -190,7 +195,7 @@ for line in pdb_fh:
                     UPDATE Low_Res_Stats SET %s = %s
                     WHERE sweep_id = %s ''' % (names_of_statistics[i][1], value_list[i][2], sweep_pk))
                     cur.execute('''
-                    UPDATE Overall_Res_Stats SET %s = %s
+                    UPDATE Overall_Stats SET %s = %s
                     WHERE sweep_id = %s ''' % (names_of_statistics[i][1], value_list[i][0], sweep_pk))
                 except: pass
             cur.execute('''
@@ -216,6 +221,7 @@ for line in pdb_fh:
             UPDATE PDB_id SET
             data_type = ? WHERE id = ?''', (data_type, pdb_pk))
             output.write('SAD data input for %s completed.\n' % (pdb_id))
+            print 'SAD data input for %s completed.' % (pdb_id)
             conn.commit()
             continue 
             
@@ -313,5 +319,6 @@ for line in pdb_fh:
             UPDATE PDB_id SET
             data_type = ? WHERE id = ?''', (data_type, pdb_pk))
             output.write('MAD data input for %s completed.\n' % (pdb_id))
+            print 'MAD data input for %s completed.' % (pdb_id)
 
 conn.commit()
