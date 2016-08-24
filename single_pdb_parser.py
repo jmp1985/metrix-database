@@ -138,35 +138,30 @@ for line in fh_pdb:
       info = line[1:]
       #printLine(line)
 
-# What to do if this script cannot find the variable?
-# - Could add initialised variables to a list?
-# - Then add them to the dictionary
-# - Main issue seems to be with solvent_content
-
 pdb_data = {
-  'Program' : program,
-  'Resolution Range High': resolution_range_high,
-  'Resolution Range Low' : resolution_range_low,
-  'Completeness' : completeness,
-  'Number of Reflections' : number_of_reflections,
-  'R Value' : r_value,
-  'Experiment Type' :experiment_type,
-  'Date of Collection' : date_of_collection,
-  'Synchrotron (Y/N)' : synchrotron,
-  'Radiation Source' : radiation_source,
-  'Beamline' : beamline,
-  'Wavlength or Range' : wavelength_or_range,
-  'Detector Type' : detector_type,
-  'Detector Manufacturer' : detector_manufacturer,
-  'Intensity-Integration Software' : intensity_software,
-  'Data Scaling Software' : data_scaling_software,
-  'Data Redundancy' : data_redundancy,
-  'R Merge' : r_merge,
-  'R Sym': r_sym,
-  'I/SIGMA' : i_over_sigma,
-  'Solvent Content' : "solvent_content", # Temporary fix
-  'Matthews Coefficient' : matthews_coefficient,
-}
+      'Program' : program,
+      'Resolution_Range_High': resolution_range_high,
+      'Resolution_Range_Low' : resolution_range_low,
+      'Completeness' : completeness,
+      'Number_of_Reflections' : number_of_reflections,
+      'R_Value' : r_value,
+      'Experiment_Type' :experiment_type,
+      'Date_of_Collection' : date_of_collection,
+      'Synchrotron_(Y/N)' : synchrotron,
+      'Radiation_Source' : radiation_source,
+      'Beamline' : beamline,
+      'Wavlength_or_Range' : wavelength_or_range,
+      'Detector_Type' : detector_type,
+      'Detector_Manufacturer' : detector_manufacturer,
+      'Intensity_Integration_Software' : intensity_software,
+      'Data_Scaling_Software' : data_scaling_software,
+      'Data_Redundancy' : data_redundancy,
+      'R_Merge' : r_merge,
+      'R_Sym': r_sym,
+      'I/SIGMA' : i_over_sigma,
+      'Solvent_Content' : "solvent_content", # Temporary fix
+      'Matthews_Coefficient' : matthews_coefficient,
+    }
 #print
 
 #print 'Data Collected.'
