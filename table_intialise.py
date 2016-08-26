@@ -2,7 +2,7 @@ import sqlite3
 import sys
 import os.path
 
-conn = sqlite3.connect('pdb_coordinates.sqlite')
+conn = sqlite3.connect('metrix_db.sqlite')
 cur = conn.cursor()
 
 cur.executescript('''
