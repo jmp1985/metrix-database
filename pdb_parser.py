@@ -39,7 +39,7 @@ if args.pdb_id is None:
   exit (0)
 print(args.pdb_id)'''
 
-conn = sqlite3.connect('pdb_coordinates.sqlite')
+conn = sqlite3.connect('metrix_db.sqlite')
 cur = conn.cursor()
 
 # This code is needed if you want to add the data in bulk
