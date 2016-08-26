@@ -37,7 +37,7 @@ if args.pdb_id is None:
   print 'User must supply pdb_id.'
   exit (0)
 
-conn = sqlite3.connect('pdb_coordinates.sqlite')
+conn = sqlite3.connect('metrix_db.sqlite')
 cur = conn.cursor()
 pdb_id = args.pdb_id
 
