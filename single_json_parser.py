@@ -49,7 +49,7 @@ names_of_statistics = [
 stat_name_list = ['Overall_Res_Stats', 'High_Res_Stats', 'Low_Res_Stats']
 
 
-conn = sqlite3.connect('pdb_coordinates.sqlite')
+conn = sqlite3.connect('metrix_db.sqlite')
 cur = conn.cursor()
 
 pdb_id = args.pdb_id
