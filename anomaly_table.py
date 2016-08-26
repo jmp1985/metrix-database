@@ -14,7 +14,7 @@ if args.pdb_id is None:
 
 pdb_id = args.pdb_id
 
-conn = sqlite3.connect('pdb_coordinates.sqlite')
+conn = sqlite3.connect('metrix_db.sqlite')
 cur = conn.cursor()
 
 def anomalyCheck(anomalies):
