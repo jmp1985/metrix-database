@@ -14,6 +14,8 @@ DROP TABLE IF EXISTS Overall_Stats;
 DROP TABLE IF EXISTS SWEEPS;
 DROP TABLE IF EXISTS Dev_Stats_PDB;
 DROP TABLE IF EXISTS Dev_Stats_json;
+DROP TABLE IF EXISTS Phasing;
+
 CREATE TABLE PDB_id (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     pdb_id  TEXT UNIQUE,
@@ -53,7 +55,11 @@ CREATE TABLE Dev_Stats_json (
     execution_number INTEGER,
     dials_version TEXT,
     FOREIGN KEY (sweep_id) REFERENCES SWEEP(id)
-)
+);
+CREATE TABLE Phasing (
+    pdb_id_id INTEGER,
+    phasing_success INTEGER
+    FOREIGN KEY (pdb_id) REFERENCES PDB_id(id)
 ''')
 
 names = {
