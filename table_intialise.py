@@ -58,8 +58,9 @@ CREATE TABLE Dev_Stats_json (
 );
 CREATE TABLE Phasing (
     pdb_id_id INTEGER,
-    phasing_success INTEGER
-    FOREIGN KEY (pdb_id) REFERENCES PDB_id(id)
+    phasing_success INTEGER,
+    FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+)
 ''')
 
 names = {
