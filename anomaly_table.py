@@ -17,6 +17,16 @@ pdb_id = args.pdb_id
 conn = sqlite3.connect('metrix_db.sqlite')
 cur = conn.cursor()
 
+cur.executescript('''
+DROP TABLE IF EXISTS Anomalies;
+
+CREATE TABLE Anomalies (
+    Anomaly1 TEXT,
+    Anomaly2 TEXT,
+    Anomaly3 TEXT,
+    sweep_id INTEGER,
+    FOREIGN KEY (sweep_id) REFERENCES SWEEP(id)
+) ''')
 def anomalyCheck(anomalies):
     for anomaly in anomalies:
         entry = anomaly[1].lower()
