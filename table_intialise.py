@@ -90,8 +90,8 @@ names = {
 
 for stat in names.values():
     cur.executescript('''
-    ALTER TABLE High_Res_Stats ADD {0} TEXT;
-    ALTER TABLE Low_Res_Stats ADD {0} TEXT;
-    ALTER TABLE Overall_Stats ADD {0} TEXT'''.format(stat))
+    ALTER TABLE High_Res_Stats ADD %s TEXT;
+    ALTER TABLE Low_Res_Stats ADD %s TEXT;
+    ALTER TABLE Overall_Stats ADD %s TEXT''' % (stat, stat, stat)
 
 print 'Tables have been initialised.'
