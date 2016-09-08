@@ -123,12 +123,24 @@ for item in to_extract:
 sql_command = sql_command[:-2]
 sql_command = 'SELECT ' + sql_command + ' FROM'
 sql_command = sql_command + '''
-Low_Res_Stats JOIN PDB_id JOIN SWEEPS JOIN High_Res_Stats JOIN
-Overall_Stats JOIN Dev_Stats_PDB JOIN Dev_Stats_json JOIN PDB_id_Stats
-    ON Low_Res_Stats.sweep_id = SWEEPS.id and SWEEPS.pdb_id_id = PDB_id.id
-    and High_Res_Stats.sweep_id = SWEEPS.id and Overall_Stats.sweep_id = SWEEPS.id
-    and Dev_Stats_PDB.pdb_id_id = PDB_id.id and Dev_Stats_json.sweep_id = SWEEPS.id
-    and PDB_id_Stats.pdb_id_id = PDB_id.id'''
+PDB_id 
+JOIN PDB_id_Stats 
+JOIN SWEEPS 
+JOIN High_Res_Stats 
+JOIN Phasing 
+JOIN Dev_Stats_PDB
+JOIN Dev_Stats_json
+JOIN Low_Res_Stats
+JOIN Overall_Stats
+
+ON PDB_id_Stats.pdb_id_id=PDB_id.id 
+and SWEEPS.pdb_id_id = PDB_id.id 
+and Phasing.pdb_id_id=PDB_id.id 
+and Dev_Stats_PDB.pdb_id_id=PDB_id.id
+and Dev_Stats_json.sweep_id=SWEEPS.id
+and High_Res_Stats.sweep_id = SWEEPS.id 
+and Low_Res_Stats.sweep_id=SWEEPS.id
+and Overall_Stats.sweep_id=SWEEPS.id'''
 
 print sql_command
 
@@ -137,8 +149,9 @@ for item in to_extract:
     for column in item[1]:
         column_headings.append(column)
 
-print column_headings
+
 data = cur.execute(sql_command)
+
 with open('output.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow(column_headings)
