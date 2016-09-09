@@ -3,6 +3,8 @@ import csv
 conn = sqlite3.connect('metrix_db.sqlite')
 cur = conn.cursor()
 
+# These are the current column headings in the PDB stat and Xia2 stat tables.
+
 stat_name_list = ['anomalouscorrelation','IoverSigma',
 'completeness','diffI','lowresolutionlimit','RpimI',
 'multiplicity','RmeasIpim','anomalousslope','diffF',
@@ -48,7 +50,7 @@ for item in db:
     print item[0]
     available_tables.append(item[0])
 table_count = 1
-to_extract = []
+to_extract = [] # This is the list that will be populated with columns to extract.
 while True:
     table_name = raw_input('Table %s: '% table_count)
     if table_name == 'done':
@@ -114,7 +116,10 @@ while True:
         print 'Please enter again (y/n)'
         continue
     break
-
+# The following builds the SQL command in order to select the data needed for the csv. 
+# It firstly builds a string in the right format of the column names and then joins 
+# all the tables together. There have been some problems with this execution, whereby 
+# the database stalls, but in its current instance it works as expected.
 sql_command = str()
 for item in to_extract:
     for column in item[1]:
