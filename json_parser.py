@@ -6,7 +6,7 @@ from os import path
 from os.path import isfile, join
 from os import listdir
 
-output = open('json_output.txt', 'w')
+output = open('json_output.txt', 'w') # Used for an error counting script
 
 parser = argparse.ArgumentParser(description='command line argument')
 
@@ -22,7 +22,8 @@ args = parser.parse_args()
   print 'User must supply pdb_id.'
   exit (0)
 pdb_id = args.pdb_id'''
-
+# There were some issues with SQL rejecting certain column names. 
+# The stat names were reformatted to ensure they were accepted.
 names_of_statistics = [
   ['Anomalous correlation' , 'anomalouscorrelation'],
   ['I/sigma' , 'IoverSigma'],
@@ -48,11 +49,12 @@ names_of_statistics = [
 
 stat_name_list = ['Overall_Stats', 'High_Res_Stats', 'Low_Res_Stats']
 
-
 conn = sqlite3.connect('metrix_db.sqlite')
 cur = conn.cursor()
 
-
+# Within this loop there are three different conditions, relating to SAD, MR and MAD data.
+# Each one is largely repeated code of the other, although minor differences meant that when
+# building this, defining functions were avoided, also allowing for easier debugging.
 pdb_fh = open('pdb_id_list.txt', 'r+')
 for line in pdb_fh:
     line = line.strip()
