@@ -12,15 +12,12 @@ def statRetreive(line):
     except:
       print 'Could not find data for: %s' % (line)
 
-
 def lineCheck(wordlist, line):
     wordlist = wordlist.split()
     return set(wordlist).issubset(line)
 
 def printLine(line):
     print ' '.join(line)
-
-
 
 parser = argparse.ArgumentParser(description='command line argument')
 '''
@@ -65,28 +62,21 @@ for line in pdb_fh:
           continue
       if line[0] == 'HEADER':
         pdb_id = line[-1]
-        #printLine(line)
       if lineCheck('REMARK 3 PROGRAM',line):
         program = statRetreive(line)
-        #printLine(line)
       if lineCheck('REMARK 3 HIGH RESOLUTION RANGE (ANGSTROMS)',line):
         resolution_range_high = statRetreive(line)
-        #printLine(line)
       if lineCheck('REMARK 3 LOW RESOLUTION RANGE (ANGSTROMS)',line):
         resolution_range_low = statRetreive(line)
-        #printLine(line)
       if lineCheck('REMARK 3 COMPLETENESS FOR RANGE', line):
         completeness = statRetreive(line)
-        #printLine(line)
       if lineCheck('REMARK 3 NUMBER OF REFLECTIONS',line):
         number_of_reflections = statRetreive(line)
-        #printLine(line)
       if lineCheck('REMARK 3 R VALUE (WORKING SET)',line):
         if '+' in line:
           continue
         else:
           r_value = statRetreive(line)
-        #printLine(line)
       if lineCheck('REMARK 3 FREE R VALUE', line):
         if 'TEST' in line or 'ESU' in line:
           continue
@@ -98,53 +88,38 @@ for line in pdb_fh:
         pass
       if lineCheck('REMARK 200 EXPERIMENT TYPE', line):
         experiment_type = statRetreive(line)
-        #printLine(line)
       if lineCheck('REMARK 200 DATE OF DATA COLLECTION', line):
         date_of_collection = statRetreive(line)
-        #printLine(line)
       if lineCheck('REMARK 200 SYNCHROTRON', line):
         synchrotron = statRetreive(line)
-        #printLine(line)
       if lineCheck('REMARK 200 RADIATION SOURCE', line):
         radiation_source = statRetreive(line)
-        #printLine(line)
       if lineCheck('REMARK 200 BEAMLINE', line):
           beamline = statRetreive(line)
-         # printLine(line)
       if lineCheck('REMARK 200 WAVELENGTH OR RANGE', line):
           wavelength_or_range = statRetreive(line)
-          #printLine(line)
       if lineCheck('REMARK 200 DETECTOR TYPE', line):
           detector_type = statRetreive(line)
-          #printLine(line)
       if lineCheck('REMARK 200 DETECTOR MANUFACTURER', line):
           detector_manufacturer = statRetreive(line)
-          #printLine(line)
       if lineCheck('REMARK 200 INTENSITY-INTEGRATION SOFTWARE', line):
           intensity_software = statRetreive(line)
-          #printLine(line)
       if lineCheck('REMARK 200 DATA SCALING SOFTWARE', line):
           data_scaling_software = statRetreive(line)
-          #printLine(line)
       if lineCheck('REMARK 200 DATA REDUNDANCY', line):
           data_redundancy = statRetreive(line)
-          #printLine(line)
       if lineCheck('REMARK 200 R MERGE', line):
           r_merge = statRetreive(line)
-          #printLine(line)
       if lineCheck('REMARK 200 R SYM', line):
           r_sym = statRetreive(line)
-          #printLine(line)
       if lineCheck('REMARK 200 <I/SIGMA(I)> FOR THE DATA', line):
           i_over_sigma = statRetreive(line)
       if lineCheck('REMARK 280 SOLVENT CONTENT', line):
           solvent_content = line[len(line) - 1]
-          #printLine(line)
       if lineCheck('REMARK 280 MATTHEWS COEFFICIENT, VM', line):
           matthews_coefficient = line[len(line) - 1]
       if line[0] == 'CRYST1':
           info = line[1:]
-          #printLine(line)
 
     # What to do if this script cannot find the variable?
     # - Could add initialised variables to a list?
@@ -172,20 +147,16 @@ for line in pdb_fh:
       'R_Merge' : r_merge,
       'R_Sym': r_sym,
       'I/SIGMA' : i_over_sigma,
-      'Solvent_Content' : "solvent_content", # Temporary fix
+      'Solvent_Content' : "solvent_content", # Temporary fix, this field seems to missing on most pdb files.
       'Matthews_Coefficient' : matthews_coefficient,
     }
-    #print
-
+    
     #print 'Data Collected.'
     #for item in pdb_data:
     #  try:
     #    print item + ':', pdb_data[item]
     #  except e as Exception:
     #    print e
-
-    #print
-
 
     # Inserts acquired information into relevant tables
       # Inserts pdb_id
