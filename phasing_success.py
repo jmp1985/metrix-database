@@ -4,7 +4,6 @@ import sqlite3
 conn = sqlite3.connect('metrix_db.sqlite')
 cur = conn.cursor()
 
-
 path = '/dls/mx-scratch/melanie/for_METRIX/data_base_proc/simple_MR'
 dir_list = listdir(path)
 pdb_list = []
@@ -52,4 +51,6 @@ for pdb in pdb_list:
         UPDATE Phasing SET phasing_success=0 WHERE Phasing.pdb_id_id="%s"'''% (pdb_pk))
           
   else:
+    cur.execute('''
     UPDATE Phasing SET phasing_success=0 WHERE Phasing.pdb_id_id="%s"'''% (pdb_pk))
+conn.commit()
