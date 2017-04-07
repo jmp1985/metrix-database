@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sqlite3
 import sys
 import os.path
@@ -38,7 +39,8 @@ CREATE TABLE High_Res_Stats (
 );
 CREATE TABLE Low_Res_Stats (
     sweep_id INTEGER,
-    FOREIGN KEY (sweep_id) REFERENCES SWEEP(id));
+    FOREIGN KEY (sweep_id) REFERENCES SWEEP(id)
+);
 CREATE TABLE Overall_Stats (
     sweep_id INTEGER,
     FOREIGN KEY (sweep_id) REFERENCES SWEEP(id)
@@ -58,40 +60,57 @@ CREATE TABLE Dev_Stats_json (
 );
 CREATE TABLE Phasing (
     pdb_id_id INTEGER,
-    phasing_success INTEGER,
+    mr_phasing_success INTEGER,
+    ep_phasing_success INTEGER,
     FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
 )
 ''')
 
-names = {
-  'I/sigma' : 'IoverSigma',
-  'Completeness' : 'completeness',
-  'dI/s(dI)' : 'diffI',
-  'Rmerge(I+/-)' : 'RmergeIpim',
-  'Rmerge(I)' : 'RmergeI',
-  'Low resolution limit' : 'lowresolutionlimit',
-  'Rmeas(I)' : 'RmeasI',
-  'Anomalous slope' : 'anomalousslope',
-  'dF/F' : 'diffF',
-  'Wilson B factor' : 'wilsonbfactor',
-  'Rmeas(I+/-)' : 'RmeasIpim',
-  'High resolution limit' : 'highresolutionlimit',
-  'Rpim(I+/-)' : 'RpimIpim',
-  'Anomalous correlation' : 'anomalouscorrelation',
-  'Rpim(I)' : 'RpimI',
-  'Total observations' : 'totalobservations',
-  'Multiplicity' : 'multiplicity',
-  'Anomalous completeness' : 'anomalouscompleteness',
-  'CC half' : 'cchalf',
-  'Anomalous multiplicity' : 'anomalousmultiplicity',
-  'Total unique' : 'totalunique'
+proc = {
+  'Anomalous correlation'  : 'anomalousCC',
+  'I/sigma'                : 'IoverSigma',
+  'Completeness'           : 'completeness',
+  'dI/s(dI)'               : 'diffI',
+  'Rmerge(I)'              : 'RmergeI',
+  'Low resolution limit'   : 'lowreslimit',
+  'Rpim(I)'                : 'RpimI',
+  'Multiplicity'           : 'multiplicity',
+  'Rmeas(I+/-)'            : 'RmeasdiffI',               
+  'Anomalous slope'        : 'anomalousslope',
+  'dF/F'                   : 'diffF',
+  'Wilson B factor'        : 'wilsonbfactor',
+  'Rmeas(I)'               : 'RmeasI',
+  'High resolution limit'  : 'highreslimit',
+  'Rpim(I+/-)'             : 'RpimdiffI',                
+  'Anomalous multiplicity' : 'anomalousmulti',
+  'Rmerge(I+/-)'           : 'RmergediffI',
+  'Total observations'     : 'totalobservations',
+  'Anomalous completeness' : 'anomalouscompl',
+  'CC half'                : 'cchalf',
+  'Total unique'           : 'totalunique'
 }
 
 
-for stat in names.values():
+for stat in proc.values():
     cur.executescript('''
     ALTER TABLE High_Res_Stats ADD %s TEXT;
     ALTER TABLE Low_Res_Stats ADD %s TEXT;
-    ALTER TABLE Overall_Stats ADD %s TEXT''' % (stat, stat, stat)
+    ALTER TABLE Overall_Stats ADD %s TEXT''' % (stat, stat, stat))
 
-print 'Tables have been initialised.'
+phase = {
+  'CC'          : 'cc_all_best',
+  'CC(weak)'    : 'cc_weak_best',
+  'CFOM'        : 'CFOM_best',
+  'Best trace'  : 'cc_best_build_o',
+  'Best trace'  : 'cc_best_build_i',
+  'TFZ'         : 'TFZ',
+  'LLG'         : 'LLG',
+  'eLLG'        : 'eLLG'
+}
+
+for stat in phase.values():
+    cur.executescript('''
+    ALTER TABLE Phasing ADD %s TEXT''' % (stat))
+
+
+print 'Tables have been initialised.' 
