@@ -1,0 +1,150 @@
+Environment configuration...
+XIA2_ROOT => /dls/science/users/ghp45345/dials/dials-dev20160226/modules/xia2
+XIA2CORE_ROOT => /dls/science/users/ghp45345/dials/dials-dev20160226/modules/xia2/core
+Python => /dls/science/users/ghp45345/dials/dials-dev20160226/build/../base/bin/python2.7
+CCTBX => /dls/science/users/ghp45345/dials/dials-dev20160226/modules
+CCP4 => /dls_sw/apps/ccp4/64/7.0/update14/ccp4-7.0
+CLIBD => /dls_sw/apps/ccp4/64/7.0/update14/ccp4-7.0/lib/data
+CCP4_SCR => /tmp/15001665.1.low.q/tmpztlyq_
+Working directory: /dls/mx-scratch/melanie/for_METRIX/data_base_proc/SAD_proc/3UWS
+Free space:        72298.98 GB
+Host: cs04r-sc-com06-36
+Contact: xia2.support@gmail.com
+XIA2 0.4.0.255-g7b2c877
+DIALS 1.0-244-g9021331
+Command line: xia2 -dials -atom Se /dls/mx-scratch/jcsg-data/SAD_data/3UWS
+-------------------- Spotfinding SWEEP1 --------------------
+92893 spots found on 360 images (max 2162 / bin)
+**** *  *
+*************
+********************
+******************************  *              ** **
+***************************************** * * **************
+************************************************************
+************************************************************
+************************************************************
+************************************************************
+************************************************************
+1                         image                          360
+------------------- Autoindexing SWEEP1 --------------------
+All possible indexing solutions:
+mP  39.08 108.75  77.90  90.00  94.26  90.00
+aP  39.11  77.95 108.88  90.01  90.09  94.26
+Indexing solution:
+mP  39.08 108.75  77.90  90.00  94.26  90.00
+-------------------- Integrating SWEEP1 --------------------
+Processed batches 1 to 360
+Standard Deviation in pixel range: 0.390000 0.630000
+Integration status per image (60/record):
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+"o" => good        "%" => ok        "!" => bad rmsd
+"O" => overloaded  "#" => many bad  "." => weak
+"@" => abandoned
+Mosaic spread: 0.142 < 0.142 < 0.142
+-------------------- Spotfinding SWEEP2 --------------------
+90882 spots found on 360 images (max 2246 / bin)
+****
+************
+*****************
+*********************  *                       *
+*********************************  ***  *      *******     *
+************************************************************
+************************************************************
+************************************************************
+************************************************************
+************************************************************
+1                         image                          360
+------------------- Autoindexing SWEEP2 --------------------
+All possible indexing solutions:
+mP  39.07 108.74  77.90  90.00  94.31  90.00
+aP  39.11  77.98 108.90  89.98  89.92  94.31
+Indexing solution:
+mP  39.07 108.74  77.90  90.00  94.31  90.00
+-------------------- Integrating SWEEP2 --------------------
+Processed batches 1 to 360
+Standard Deviation in pixel range: 0.400000 0.640000
+Integration status per image (60/record):
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+"o" => good        "%" => ok        "!" => bad rmsd
+"O" => overloaded  "#" => many bad  "." => weak
+"@" => abandoned
+Mosaic spread: 0.143 < 0.143 < 0.143
+-------------------- Preparing DEFAULT ---------------------
+Likely spacegroups:
+P 1 21 1
+Reindexing to first spacegroup setting: P 1 21 1 (h,k,l)
+--------------------- Scaling DEFAULT ----------------------
+Resolution limit for SAD/SWEEP1:  1.56
+Resolution limit for SAD/SWEEP2:  1.56
+--------------------- Scaling DEFAULT ----------------------
+Resolution limit for SAD/SWEEP1:  1.56
+Resolution limit for SAD/SWEEP2:  1.56
+Overall twinning score: 2.06
+Your data do not appear twinned
+Project: AUTOMATIC
+Crystal: DEFAULT
+Sequence:
+Wavelength name: SAD
+Wavelength 0.97930
+Sweeps:
+SWEEP SWEEP1 [WAVELENGTH SAD]
+TEMPLATE 171433_1_###.img
+DIRECTORY /dls/mx-scratch/jcsg-data/SAD_data/3UWS
+IMAGES (USER) 1 to 360
+MTZ file: /dls/mx-scratch/melanie/for_METRIX/data_base_proc/SAD_proc/3UWS/DEFAULT/SAD/SWEEP1/integrate/dials_integrated.mtz
+
+SWEEP SWEEP2 [WAVELENGTH SAD]
+TEMPLATE 171433_101_###.img
+DIRECTORY /dls/mx-scratch/jcsg-data/SAD_data/3UWS
+IMAGES (USER) 1 to 360
+MTZ file: /dls/mx-scratch/melanie/for_METRIX/data_base_proc/SAD_proc/3UWS/DEFAULT/SAD/SWEEP2/integrate/dials_integrated.mtz
+For AUTOMATIC/DEFAULT/SAD
+High resolution limit                             1.56    6.98    1.56
+Low resolution limit                             77.77   77.77    1.60
+Completeness                                    100.0    99.9    99.9
+Multiplicity                                      7.4     7.5     7.2
+I/sigma                                          10.8    24.1     2.6
+Rmerge                                          0.110   0.047   0.970
+Rmeas(I)                                        0.142   0.080   1.119
+Rmeas(I+/-)                                     0.128   0.055   1.138
+Rpim(I)                                         0.052   0.029   0.413
+Rpim(I+/-)                                      0.066   0.028   0.590
+CC half                                         0.997   0.997   0.763
+Wilson B factor                                 0.000
+Anomalous completeness                           99.9    99.8    99.5
+Anomalous multiplicity                            3.7     3.9     3.6
+Anomalous correlation                            0.473   0.722   0.031
+Anomalous slope                                 1.316   0.000   0.000
+dF/F                                            0.126
+dI/s(dI)                                        1.334
+Total observations                              684901  8052    48716
+Total unique                                    92368   1077    6767
+Assuming spacegroup: P 1 21 1
+Unit cell:
+39.124 108.917  77.989
+90.000  94.258  90.000
+mtz format:
+Scaled reflections: /dls/mx-scratch/melanie/for_METRIX/data_base_proc/SAD_proc/3UWS/DataFiles/AUTOMATIC_DEFAULT_free.mtz
+mtz_unmerged format:
+Scaled reflections (SAD): /dls/mx-scratch/melanie/for_METRIX/data_base_proc/SAD_proc/3UWS/DataFiles/AUTOMATIC_DEFAULT_scaled_unmerged.mtz
+sca format:
+Scaled reflections (SAD): /dls/mx-scratch/melanie/for_METRIX/data_base_proc/SAD_proc/3UWS/DataFiles/AUTOMATIC_DEFAULT_scaled.sca
+sca_unmerged format:
+Scaled reflections (SAD): /dls/mx-scratch/melanie/for_METRIX/data_base_proc/SAD_proc/3UWS/DataFiles/AUTOMATIC_DEFAULT_scaled_unmerged.sca
+Processing took 00h 24m 22s
+XIA2 used...  aimless ccp4 dials pointless xia2
+Here are the appropriate citations (BIBTeX in xia-citations.bib.)
+(1994) Acta Crystallogr. D 50, 760--763
+Evans, Philip (2006) Acta Crystallographica Section D 62, 72--82
+Winter, G. (2010) Journal of Applied Crystallography 43
+Status: normal termination

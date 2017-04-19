@@ -1,0 +1,109 @@
+Environment configuration...
+XIA2_ROOT => /dls/science/users/ghp45345/dials/dials-dev20160226/modules/xia2
+XIA2CORE_ROOT => /dls/science/users/ghp45345/dials/dials-dev20160226/modules/xia2/core
+Python => /dls/science/users/ghp45345/dials/dials-dev20160226/build/../base/bin/python2.7
+CCTBX => /dls/science/users/ghp45345/dials/dials-dev20160226/modules
+CCP4 => /dls_sw/apps/ccp4/64/7.0/update14/ccp4-7.0
+CLIBD => /dls_sw/apps/ccp4/64/7.0/update14/ccp4-7.0/lib/data
+CCP4_SCR => /tmp/15037819.1.low.q/tmpq1CUn1
+Working directory: /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MR/1VJ0
+Free space:        70238.82 GB
+Host: cs04r-sc-com06-56
+Contact: xia2.support@gmail.com
+XIA2 0.4.0.255-g7b2c877
+DIALS 1.0-244-g9021331
+Command line: xia2 -dials /dls/mx-scratch/jcsg-data/MR_data/1VJ0
+-------------------- Spotfinding SWEEP1 --------------------
+192687 spots found on 400 images (max 3902 / bin)
+* **     *
+************* ** ** *
+********************************** ***** ** ** **** ***  * *
+************************************************************
+************************************************************
+************************************************************
+************************************************************
+************************************************************
+************************************************************
+************************************************************
+1                         image                          400
+------------------- Autoindexing SWEEP1 --------------------
+All possible indexing solutions:
+oP  92.93 105.00 161.74  90.00  90.00  90.00
+mP  92.87 161.67 104.91  90.00  90.06  90.00
+aP  92.87 104.94 161.69  89.96  90.00  90.05
+Indexing solution:
+oP  92.93 105.00 161.74  90.00  90.00  90.00
+-------------------- Integrating SWEEP1 --------------------
+Processed batches 1 to 400
+Standard Deviation in pixel range: 0.310000 0.430000
+Integration status per image (60/record):
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooo
+"o" => good        "%" => ok        "!" => bad rmsd
+"O" => overloaded  "#" => many bad  "." => weak
+"@" => abandoned
+Mosaic spread: 0.095 < 0.095 < 0.095
+-------------------- Preparing DEFAULT ---------------------
+Likely spacegroups:
+P 21 21 21
+Reindexing to first spacegroup setting: P 21 21 21 (h,k,l)
+--------------------- Scaling DEFAULT ----------------------
+Resolution limit for NATIVE/SWEEP1:  1.84
+--------------------- Scaling DEFAULT ----------------------
+Resolution limit for NATIVE/SWEEP1:  1.84
+Overall twinning score: 2.39
+Your data do not appear twinned
+Project: AUTOMATIC
+Crystal: DEFAULT
+Sequence:
+Wavelength name: NATIVE
+Wavelength 1.00000
+Sweeps:
+SWEEP SWEEP1 [WAVELENGTH NATIVE]
+TEMPLATE 7670_2_###.img
+DIRECTORY /dls/mx-scratch/jcsg-data/MR_data/1VJ0
+IMAGES (USER) 1 to 400
+MTZ file: /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MR/1VJ0/DEFAULT/NATIVE/SWEEP1/integrate/dials_integrated.mtz
+For AUTOMATIC/DEFAULT/NATIVE
+High resolution limit                             1.84    8.02    1.84
+Low resolution limit                            161.57  161.57    1.89
+Completeness                                     82.1    99.2     5.6
+Multiplicity                                      3.6     3.8     1.0
+I/sigma                                          14.3    42.4     0.9
+Rmerge                                          0.045   0.020   0.432
+Rmeas(I)                                        0.061   0.028   0.822
+Rmeas(I+/-)                                     0.060   0.027   0.611
+Rpim(I)                                         0.031   0.014   0.581
+Rpim(I+/-)                                      0.039   0.018   0.432
+CC half                                         0.998   0.999   0.398
+Wilson B factor                                 0.000
+Anomalous completeness                           70.4    99.2     0.2
+Anomalous multiplicity                            1.7     2.2     1.0
+Anomalous correlation                           -0.041  -0.030   0.000
+Anomalous slope                                 0.959   0.000   0.000
+Total observations                              401143  7051    610
+Total unique                                    112722  1835    584
+Assuming spacegroup: P 21 21 21
+Unit cell:
+93.021 104.994 161.565
+90.000  90.000  90.000
+mtz format:
+Scaled reflections: /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MR/1VJ0/DataFiles/AUTOMATIC_DEFAULT_free.mtz
+mtz_unmerged format:
+Scaled reflections (NATIVE): /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MR/1VJ0/DataFiles/AUTOMATIC_DEFAULT_scaled_unmerged.mtz
+sca format:
+Scaled reflections (NATIVE): /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MR/1VJ0/DataFiles/AUTOMATIC_DEFAULT_scaled.sca
+sca_unmerged format:
+Scaled reflections (NATIVE): /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MR/1VJ0/DataFiles/AUTOMATIC_DEFAULT_scaled_unmerged.sca
+Processing took 00h 13m 40s
+XIA2 used...  aimless ccp4 dials pointless xia2
+Here are the appropriate citations (BIBTeX in xia-citations.bib.)
+(1994) Acta Crystallogr. D 50, 760--763
+Evans, Philip (2006) Acta Crystallographica Section D 62, 72--82
+Winter, G. (2010) Journal of Applied Crystallography 43
+Status: normal termination

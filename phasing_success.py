@@ -18,7 +18,7 @@ for pdb in pdb_list:
   pdb_pk = cur.fetchone()[0]
   cur.execute('''
     INSERT OR IGNORE INTO Phasing (pdb_id_id) VALUES %s ''' % (pdb_pk))
-  
+
   new_path = path + '/' + pdb
   phaser_search = listdir(new_path)
   if 'PHASER.sol' in phaser_search:
@@ -32,24 +32,24 @@ for pdb in pdb_list:
         item1 = line[-1]
         item2 = line[-2]
         indicator_list = [item1, item2]
-       
+
         if 'TFZ' in item1 or 'TFZ' in item2:
           count += 1
           indicator_list = sorted(indicator_list)
           TFZ_sum += float(indicator_list[1][5:])
           LLG_sum += float(indicator_list[0][4:])
-    
+
     if count != 0:
       TFZ_mean = TFZ_sum / count
       LLG_mean = LLG_sum / count
     if TFZ_mean > 8.0 and LLG_mean > 120:
       cur.execute('''
         UPDATE Phasing SET phasing_success=1 WHERE Phasing.pdb_id_id="%s"'''% (pdb_pk))
-       
-    else: 
+
+    else:
       cur.execute('''
         UPDATE Phasing SET phasing_success=0 WHERE Phasing.pdb_id_id="%s"'''% (pdb_pk))
-          
+
   else:
     cur.execute('''
     UPDATE Phasing SET phasing_success=0 WHERE Phasing.pdb_id_id="%s"'''% (pdb_pk))

@@ -1,6 +1,6 @@
 # metrix-database
 Instructions on use.
-To view the database some database management software is required. The advised application is 'sqlitebrowser'. Alternatively the database can be viewed in csv format by extracting the information at the end of the procedure. 
+To view the database some database management software is required. The advised application is 'sqlitebrowser'. Alternatively the database can be viewed in csv format by extracting the information at the end of the procedure.
 
 
 The database is designed to be set up in a few simple steps.

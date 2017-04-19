@@ -1,0 +1,274 @@
+Environment configuration...
+XIA2_ROOT => /dls/science/users/ghp45345/dials/dials-dev20160226/modules/xia2
+XIA2CORE_ROOT => /dls/science/users/ghp45345/dials/dials-dev20160226/modules/xia2/core
+Python => /dls/science/users/ghp45345/dials/dials-dev20160226/build/../base/bin/python2.7
+CCTBX => /dls/science/users/ghp45345/dials/dials-dev20160226/modules
+CCP4 => /dls_sw/apps/ccp4/64/7.0/update14/ccp4-7.0
+CLIBD => /dls_sw/apps/ccp4/64/7.0/update14/ccp4-7.0/lib/data
+CCP4_SCR => /tmp/15014572.1.low.q/tmpPWGkby
+Working directory: /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MAD/3LYH
+Free space:        71978.02 GB
+Host: cs04r-sc-com06-30
+Contact: xia2.support@gmail.com
+XIA2 0.4.0.255-g7b2c877
+DIALS 1.0-244-g9021331
+Command line: xia2 -dials -atom Se /dls/mx-scratch/jcsg-data/MAD_data/3LYH
+-------------------- Spotfinding SWEEP1 --------------------
+70538 spots found on 200 images (max 1451 / bin)
+ *  *
+****** * ***    *     * ** *                  * *   *    **
+************ * ** ** ** *****  * **  * ** ***** ****** ****
+************************************************************
+************************************************************
+************************************************************
+************************************************************
+************************************************************
+************************************************************
+************************************************************
+1                         image                          200
+------------------- Autoindexing SWEEP1 --------------------
+All possible indexing solutions:
+aP  37.84  38.60  39.89  70.31  83.09  72.00
+Indexing solution:
+aP  37.84  38.60  39.89  70.31  83.09  72.00
+-------------------- Integrating SWEEP1 --------------------
+Processed batches 1 to 200
+Standard Deviation in pixel range: 0.250000 0.330000
+Integration status per image (60/record):
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooo
+"o" => good        "%" => ok        "!" => bad rmsd
+"O" => overloaded  "#" => many bad  "." => weak
+"@" => abandoned
+Mosaic spread: 0.292 < 0.292 < 0.292
+-------------------- Spotfinding SWEEP2 --------------------
+32655 spots found on 100 images (max 708 / bin)
+  *
+***            *       *  *         *    *   *  * **    **
+**** ** *****  * ** *  ** *  ** ** ** ** **  **** ** ** ****
+**** ** ***** ******** ***** ** ** ***** ** ***** **********
+**************************************** *******************
+************************************************************
+************************************************************
+************************************************************
+************************************************************
+************************************************************
+1                         image                          100
+------------------- Autoindexing SWEEP2 --------------------
+All possible indexing solutions:
+aP  37.85  38.62  39.89  70.32  83.09  71.99
+Indexing solution:
+aP  37.85  38.62  39.89  70.32  83.09  71.99
+-------------------- Integrating SWEEP2 --------------------
+Processed batches 1 to 100
+Standard Deviation in pixel range: 0.290000 0.330000
+Integration status per image (60/record):
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooo
+"o" => good        "%" => ok        "!" => bad rmsd
+"O" => overloaded  "#" => many bad  "." => weak
+"@" => abandoned
+Mosaic spread: 0.298 < 0.298 < 0.298
+-------------------- Spotfinding SWEEP3 --------------------
+456989 spots found on 180 images (max 14628 / bin)
+              *
+    *         *         *  **
+    *   *  *  *    *    *  **
+    *** * **  *  * *    ** **
+* * ***** **  ******  * ** **  *          *   *
+************  ***************  *       *  ** ** * *    *
+***************************** ***  *   ***** **** * ** *  *
+********************************* *************************
+************************************************************
+************************************************************
+1                         image                          180
+------------------- Autoindexing SWEEP3 --------------------
+All possible indexing solutions:
+aP  37.85  38.62  39.91  70.32  83.10  71.99
+Indexing solution:
+aP  37.85  38.62  39.91  70.32  83.10  71.99
+-------------------- Integrating SWEEP3 --------------------
+Processed batches 1 to 180
+Standard Deviation in pixel range: 0.230000 0.280000
+Integration status per image (60/record):
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+"o" => good        "%" => ok        "!" => bad rmsd
+"O" => overloaded  "#" => many bad  "." => weak
+"@" => abandoned
+Mosaic spread: 0.575 < 0.575 < 0.575
+-------------------- Spotfinding SWEEP4 --------------------
+327068 spots found on 180 images (max 10313 / bin)
+        *       *     *
+  *    **       *  *  **
+  *  **** *   * *  ** **
+  ** **** *   * *  *****  *
+  ** ****** *** * ****** **              *         *
+ *** ****** ***************   * *     * **        **   * *
+***************************  ** * ** ******       **  ** * *
+************************************************************
+************************************************************
+************************************************************
+1                         image                          180
+------------------- Autoindexing SWEEP4 --------------------
+All possible indexing solutions:
+aP  37.85  38.62  39.91  70.32  83.10  72.00
+Indexing solution:
+aP  37.85  38.62  39.91  70.32  83.10  72.00
+-------------------- Integrating SWEEP4 --------------------
+Processed batches 1 to 180
+Standard Deviation in pixel range: 0.230000 0.270000
+Integration status per image (60/record):
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+"o" => good        "%" => ok        "!" => bad rmsd
+"O" => overloaded  "#" => many bad  "." => weak
+"@" => abandoned
+Mosaic spread: 0.537 < 0.537 < 0.537
+-------------------- Preparing DEFAULT ---------------------
+Likely spacegroups:
+P 1
+Reindexing to first spacegroup setting: P 1 (h,k,l)
+--------------------- Scaling DEFAULT ----------------------
+Resolution limit for WAVE1/SWEEP1:  1.47
+Resolution limit for WAVE1/SWEEP2:  1.69
+Resolution limit for WAVE2/SWEEP3:  1.77
+Resolution limit for WAVE3/SWEEP4:  1.58
+--------------------- Scaling DEFAULT ----------------------
+Resolution limit for WAVE1/SWEEP1:  1.47
+Resolution limit for WAVE1/SWEEP2:  1.69
+Resolution limit for WAVE2/SWEEP3:  1.77
+Resolution limit for WAVE3/SWEEP4:  1.58
+Overall twinning score: 2.34
+Your data do not appear twinned
+
+------------------ Local Scaling DEFAULT -------------------
+WAVE1   0.0 0.00 (ok)
+WAVE2  -0.4 0.05 (ok)
+WAVE3  -0.2 0.06 (ok)
+------------------------------------------------------------
+Project: AUTOMATIC
+Crystal: DEFAULT
+Sequence:
+Wavelength name: WAVE1
+Wavelength 0.97915
+Sweeps:
+SWEEP SWEEP1 [WAVELENGTH WAVE1]
+TEMPLATE 144484_1_####.mccd
+DIRECTORY /dls/mx-scratch/jcsg-data/MAD_data/3LYH
+IMAGES (USER) 1 to 200
+MTZ file: /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MAD/3LYH/DEFAULT/WAVE1/SWEEP1/integrate/dials_integrated.mtz
+
+SWEEP SWEEP2 [WAVELENGTH WAVE1]
+TEMPLATE 144484_2_####.mccd
+DIRECTORY /dls/mx-scratch/jcsg-data/MAD_data/3LYH
+IMAGES (USER) 1 to 100
+MTZ file: /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MAD/3LYH/DEFAULT/WAVE1/SWEEP2/integrate/dials_integrated.mtz
+Wavelength name: WAVE2
+Wavelength 0.97903
+Sweeps:
+SWEEP SWEEP3 [WAVELENGTH WAVE2]
+TEMPLATE 144484_3_E1_####.mccd
+DIRECTORY /dls/mx-scratch/jcsg-data/MAD_data/3LYH
+IMAGES (USER) 1 to 180
+MTZ file: /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MAD/3LYH/DEFAULT/WAVE2/SWEEP3/integrate/dials_integrated.mtz
+Wavelength name: WAVE3
+Wavelength 0.91162
+Sweeps:
+SWEEP SWEEP4 [WAVELENGTH WAVE3]
+TEMPLATE 144484_3_E2_####.mccd
+DIRECTORY /dls/mx-scratch/jcsg-data/MAD_data/3LYH
+IMAGES (USER) 1 to 180
+MTZ file: /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MAD/3LYH/DEFAULT/WAVE3/SWEEP4/integrate/dials_integrated.mtz
+For AUTOMATIC/DEFAULT/WAVE1
+High resolution limit                             1.47    6.58    1.47
+Low resolution limit                             35.97   35.97    1.51
+Completeness                                     65.0    97.4     1.5
+Multiplicity                                      2.9     3.2     1.0
+I/sigma                                          19.8    51.1     1.2
+Rmerge                                          0.024   0.015   0.000
+Rmeas(I)                                        0.050   0.051   0.000
+Rmeas(I+/-)                                     0.034   0.021   0.000
+Rpim(I)                                         0.028   0.029   0.000
+Rpim(I+/-)                                      0.024   0.015   0.000
+CC half                                         0.998   0.997   0.000
+Wilson B factor                                 0.000
+Anomalous completeness                           54.6    95.0     0.0
+Anomalous multiplicity                            1.3     1.6     1.0
+Anomalous correlation                            0.726   0.857   0.000
+Anomalous slope                                 1.317   0.000   0.000
+dF/F                                            0.067
+dI/s(dI)                                        1.482
+Total observations                              64312   1189    39
+Total unique                                    22316   370     38
+For AUTOMATIC/DEFAULT/WAVE2
+High resolution limit                             1.77    6.39    1.77
+Low resolution limit                             35.97   35.97    1.84
+Completeness                                     64.3    98.1     0.7
+Multiplicity                                      1.8     1.9     1.0
+I/sigma                                          21.3    41.1     5.7
+Rmerge                                          0.025   0.020   0.000
+Rmeas(I)                                        0.055   0.063   0.000
+Rmeas(I+/-)                                     0.036   0.029   0.000
+Rpim(I)                                         0.039   0.044   0.000
+Rpim(I+/-)                                      0.025   0.020   0.000
+CC half                                         0.996   0.993   0.000
+Wilson B factor                                 0.000
+Anomalous completeness                           42.5    88.8     0.0
+Anomalous multiplicity                            0.7     1.0     0.0
+Anomalous correlation                            0.000   0.000   0.000
+Anomalous slope                                 1.676   0.000   0.000
+dF/F                                            0.070
+dI/s(dI)                                        1.549
+Total observations                              22190   782     15
+Total unique                                    12611   404     15
+For AUTOMATIC/DEFAULT/WAVE3
+High resolution limit                             1.58    6.52    1.58
+Low resolution limit                             35.97   35.97    1.63
+Completeness                                     55.7    96.9     0.1
+Multiplicity                                      1.8     1.9     1.0
+I/sigma                                          19.4    40.5     4.5
+Rmerge                                          0.026   0.016   0.000
+Rmeas(I)                                        0.042   0.040   0.000
+Rmeas(I+/-)                                     0.037   0.023   0.000
+Rpim(I)                                         0.029   0.028   0.000
+Rpim(I+/-)                                      0.026   0.016   0.000
+CC half                                         0.998   0.997   0.000
+Wilson B factor                                 0.000
+Anomalous completeness                           38.9    84.5     0.0
+Anomalous multiplicity                            0.7     1.0     0.0
+Anomalous correlation                            0.000   0.000   0.000
+Anomalous slope                                 1.254   0.000   0.000
+dF/F                                            0.064
+dI/s(dI)                                        1.139
+Total observations                              27830   717     3
+Total unique                                    15407   377     3
+Assuming spacegroup: P 1
+Unit cell:
+37.831  38.598  39.880
+70.303  83.071  71.992
+mtz format:
+Scaled reflections: /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MAD/3LYH/DataFiles/AUTOMATIC_DEFAULT_free.mtz
+mtz_unmerged format:
+Scaled reflections (WAVE1): /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MAD/3LYH/DataFiles/AUTOMATIC_DEFAULT_scaled_unmerged_WAVE1.mtz
+Scaled reflections (WAVE2): /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MAD/3LYH/DataFiles/AUTOMATIC_DEFAULT_scaled_unmerged_WAVE2.mtz
+Scaled reflections (WAVE3): /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MAD/3LYH/DataFiles/AUTOMATIC_DEFAULT_scaled_unmerged_WAVE3.mtz
+sca format:
+Scaled reflections (WAVE1): /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MAD/3LYH/DataFiles/AUTOMATIC_DEFAULT_scaled_WAVE1.sca
+Scaled reflections (WAVE2): /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MAD/3LYH/DataFiles/AUTOMATIC_DEFAULT_scaled_WAVE2.sca
+Scaled reflections (WAVE3): /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MAD/3LYH/DataFiles/AUTOMATIC_DEFAULT_scaled_WAVE3.sca
+sca_unmerged format:
+Scaled reflections (WAVE1): /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MAD/3LYH/DataFiles/AUTOMATIC_DEFAULT_scaled_unmerged_WAVE1.sca
+Scaled reflections (WAVE2): /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MAD/3LYH/DataFiles/AUTOMATIC_DEFAULT_scaled_unmerged_WAVE2.sca
+Scaled reflections (WAVE3): /dls/mx-scratch/melanie/for_METRIX/data_base_proc/MAD/3LYH/DataFiles/AUTOMATIC_DEFAULT_scaled_unmerged_WAVE3.sca
+Processing took 00h 27m 40s
+XIA2 used...  aimless ccp4 dials pointless xia2
+Here are the appropriate citations (BIBTeX in xia-citations.bib.)
+(1994) Acta Crystallogr. D 50, 760--763
+Evans, Philip (2006) Acta Crystallographica Section D 62, 72--82
+Winter, G. (2010) Journal of Applied Crystallography 43
+Status: normal termination

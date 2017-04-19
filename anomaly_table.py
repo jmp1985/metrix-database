@@ -1,6 +1,6 @@
 # An example of how a new table might be added in the future whereby the user is prompted to, for a specified PDB id,
-# fill in information regarding anomalies. The script was designed with expansion in mind and data input could feasibly 
-# be altered by changing the second item in list of lists of anomalies and putting it inside a for loop. 
+# fill in information regarding anomalies. The script was designed with expansion in mind and data input could feasibly
+# be altered by changing the second item in list of lists of anomalies and putting it inside a for loop.
 
 import sqlite3
 from os import path
