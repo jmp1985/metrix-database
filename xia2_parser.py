@@ -1,5 +1,5 @@
 from __future__ import division
-from metrix_db.initialiser import processing_statistic_name_mapping
+from .initialiser import processing_statistic_name_mapping
 
 
 # Name of columns for statistics
@@ -29,6 +29,7 @@ class XIA2Parser(object):
     self.cur.execute('''
       SELECT id FROM PDB_id WHERE PDB_id.pdb_id="%s"
     ''' % (pdb_id))
+    
     return self.cur.fetchone()[0]
 
   def _insert_or_ignore_into_sweeps(self, pdb_id):
@@ -193,7 +194,7 @@ class XIA2Parser(object):
     self._update_wavelength(sweep_pk, wavelength)
 
     # For each statistic, enter into the database
-    for stat, name in processing_statistic_name_mapping.iteritems():
+    for stat, name in processing_statistic_name_mapping.items():
       if stat in statistics:
         assert len(statistics[stat]) in [1, 3]
         if len(statistics[stat]) == 3:
@@ -230,7 +231,7 @@ class XIA2Parser(object):
     '''
     crystals = data['_crystals']
     data_type = None
-    for name in crystals.iterkeys():
+    for name in crystals.keys():
       wavelengths = crystals[name]['_wavelengths'].keys()
       if 'NATIVE' in wavelengths:
         assert data_type is None or data_type == 'MR'
@@ -252,11 +253,13 @@ class XIA2Parser(object):
     '''
     # Loop through all the crystals
     crystals = data['_crystals']
-    for crystal_name in crystals.iterkeys():
+    for crystal_name in crystals.keys():
 
       # Get statistics and wavelengths
       crystal = crystals[crystal_name]
       scaler = crystal['_scaler']
+      if not '_scaler' in crystal or crystal['_scaler'] is None:
+        continue
       scalr_statistics = scaler['_scalr_statistics']
       wavelengths = crystal['_wavelengths']
 
@@ -269,7 +272,7 @@ class XIA2Parser(object):
 
     # Update the data type
     self._update_data_type("SAD", pdb_pk)
-    print 'SAD data input for %s completed.' % (pdb_id)
+    print( 'SAD data input for %s completed.' % (pdb_id))
 
 
   def _parse_xia2_mad(self, pdb_id, pdb_pk, data, dials_version):
@@ -279,11 +282,13 @@ class XIA2Parser(object):
     '''
     # Loop through all the crystals
     crystals = data['_crystals']
-    for crystal_name in crystals.iterkeys():
+    for crystal_name in crystals:
 
       # Get statistics and wavelengths
       crystal = crystals[crystal_name]
       scaler = crystal['_scaler']
+      if not '_scaler' in crystal or crystal['_scaler'] is None:
+        continue
       scalr_statistics = scaler['_scalr_statistics']
       wavelengths = crystal['_wavelengths']
 
@@ -299,7 +304,7 @@ class XIA2Parser(object):
 
     # Update the data type
     self._update_data_type("MAD", pdb_pk)
-    print 'MAD data input for %s completed.' % (pdb_id)
+    print ('MAD data input for %s completed.' % (pdb_id))
 
 
   def _parse_xia2_mr(self, pdb_id, pdb_pk, data, dials_version):
@@ -310,11 +315,13 @@ class XIA2Parser(object):
 
     # Loop through all the crystals
     crystals = data['_crystals']
-    for crystal_name in crystals.iterkeys():
+    for crystal_name in crystals:
 
       # Get statistics and wavelengths
       crystal = crystals[crystal_name]
       scaler = crystal['_scaler']
+      if not '_scaler' in crystal or crystal['_scaler'] is None:
+        continue
       scalr_statistics = scaler['_scalr_statistics']
       wavelengths = crystal['_wavelengths']
 
@@ -327,7 +334,7 @@ class XIA2Parser(object):
 
     # Update the data type
     self._update_data_type("MR", pdb_pk)
-    print 'MR data input for %s completed. ' % (pdb_id)
+    print ('MR data input for %s completed. ' % (pdb_id))
 
 
   def _parse_xia2_json(self, pdb_id, filename, dials_version):

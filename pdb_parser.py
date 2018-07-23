@@ -24,20 +24,20 @@ class PDBParser(object):
           pos = [i for i,x in enumerate(line) if x == ':']
           return ' '.join(line[-1:])
         except:
-          print 'Could not find data for: %s' % (line)
+          print( 'Could not find data for: %s' % (line))
 
     def lineCheck(wordlist, line):
         wordlist = wordlist.split()
         return set(wordlist).issubset(line)
 
     def printLine(line):
-        print ' '.join(line)
+        print (' '.join(line))
 
     # Get the sqlite cursor
     cur = self.handle.cursor()
 
     # Read the pdb file
-    print 'Reading: %s for pdb id: %s' % (filename, pdb_id)
+    print ('Reading: %s for pdb id: %s' % (filename, pdb_id))
     with open(filename) as infile:
 
       # Assigns required statistics to their pointers

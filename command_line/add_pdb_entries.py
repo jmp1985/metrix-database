@@ -55,6 +55,6 @@ if __name__ == '__main__':
   for pdb_id in pdb_id_list:
     filename = join(args.directory, "%s.pdb" % pdb_id)
     if not exists(filename):
-      print "Skipping non existent file: %s" % filename
+      print("Skipping non existent file: %s" % filename)
       continue
     db.add_pdb_entry(pdb_id, filename)

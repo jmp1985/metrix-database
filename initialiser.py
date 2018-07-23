@@ -35,7 +35,9 @@ phasing_statistic_name_mapping = {
   'Best trace'  : 'cc_best_build_i',
   'TFZ'         : 'TFZ',
   'LLG'         : 'LLG',
-  'eLLG'        : 'eLLG'
+  'eLLG'        : 'eLLG',
+  'ep_success_o': 'ep_success_o',
+  'ep_success_i': 'ep_success_i'
 }
 
 
@@ -129,9 +131,14 @@ class Initialiser(object):
           FOREIGN KEY (sweep_id) REFERENCES SWEEP(id)
       );
       CREATE TABLE Phasing (
-          pdb_id_id INTEGER,
+          pdb_id_id INTEGER UNIQUE,
           mr_phasing_success INTEGER,
-          ep_phasing_success INTEGER,
+          ep_success_o INTEGER,
+          ep_percent_0 REAL,
+          ep_success_i INTEGER,
+          ep_percent_i REAL,
+          ep_img_o TEXT,
+          ep_img_i TEXT,
           FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
       )
       ''')
@@ -144,7 +151,7 @@ class Initialiser(object):
         ALTER TABLE Low_Res_Stats ADD %s TEXT;
         ALTER TABLE Overall_Stats ADD %s TEXT''' % (stat, stat, stat))
 
-    # Add the phasing statistics
-    for stat in phasing_statistic_name_mapping.values():
-        cur.executescript('''
-        ALTER TABLE Phasing ADD %s TEXT''' % (stat))
+ #   # Add the phasing statistics
+ #   for stat in phasing_statistic_name_mapping.values():
+ #       cur.executescript('''
+ #       ALTER TABLE Phasing ADD %s TEXT''' % (stat))

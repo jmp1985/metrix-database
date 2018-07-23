@@ -19,5 +19,5 @@ for pdb in pdb_list:
 for pdb in pdb_id_list:
   fh.write(pdb)
   fh.write('\n')
-  print pdb
+  print(pdb)
 fh.close()

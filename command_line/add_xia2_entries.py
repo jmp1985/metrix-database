@@ -65,7 +65,7 @@ if __name__ == '__main__':
         latest_proc_dir = proc_dirs[-1]
         xia2dir = join(args.directory, latest_proc_dir, pdb_id)
       if not exists(xia2dir):
-        print '%s does not exist' % xia2dir
+        print ('%s does not exist' % xia2dir)
         error_log.write('%s does not exist \n' % (xia2dir))
         continue
 
@@ -75,15 +75,15 @@ if __name__ == '__main__':
 
       # If files doen't exist then skip
       if not exists(xia2_txt_filename):
-        print "Skipping %s" % pdb_id
+        print ("Skipping %s" % pdb_id)
         error_log.write('%s does not exist \n' % (xia2_txt_filename))
         continue
 
       if not exists(xia2_json_filename):
-        print "Skipping %s" % pdb_id
+        print ("Skipping %s" % pdb_id)
         error_log.write('%s does not exist \n' % (xia2_json_filename))
         continue
 
       # Add xia2 entry
-      print "Parsing %s" % pdb_id
+      print ("Parsing %s" % pdb_id)
       db.add_xia2_entry(pdb_id, xia2_txt_filename, xia2_json_filename)

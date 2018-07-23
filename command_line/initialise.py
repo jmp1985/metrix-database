@@ -11,4 +11,4 @@ if __name__ == '__main__':
   if not exists("metrix_db.sqlite"):
     raise RuntimeError('Failed to initialise')
 
-  print "Database is initialised"
+  print("Database is initialised")
