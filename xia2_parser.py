@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import division
 from metrix_db.initialiser import processing_statistic_name_mapping
 
@@ -256,6 +257,8 @@ class XIA2Parser(object):
 
       # Get statistics and wavelengths
       crystal = crystals[crystal_name]
+      if not '_scaler' in crystal or crystal['_scaler'] is None:
+        continue
       scaler = crystal['_scaler']
       scalr_statistics = scaler['_scalr_statistics']
       wavelengths = crystal['_wavelengths']
@@ -283,6 +286,8 @@ class XIA2Parser(object):
 
       # Get statistics and wavelengths
       crystal = crystals[crystal_name]
+      if not '_scaler' in crystal or crystal['_scaler'] is None:
+        continue
       scaler = crystal['_scaler']
       scalr_statistics = scaler['_scalr_statistics']
       wavelengths = crystal['_wavelengths']
@@ -314,6 +319,8 @@ class XIA2Parser(object):
 
       # Get statistics and wavelengths
       crystal = crystals[crystal_name]
+      if not '_scaler' in crystal or crystal['_scaler'] is None:
+        continue
       scaler = crystal['_scaler']
       scalr_statistics = scaler['_scalr_statistics']
       wavelengths = crystal['_wavelengths']

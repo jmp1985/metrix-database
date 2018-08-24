@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 if __name__ == '__main__':
 
@@ -30,7 +31,7 @@ if __name__ == '__main__':
     dest    = 'directory',
     type    = str,
     help    = 'the pdb id directory',
-    default = '/dls/mx-scratch/jcsg-data/PDB_coordinates')
+    default = '/dls/metrix/metrix/PDB_coordinates')
 
   # Parse the arguments
   args = parser.parse_args()

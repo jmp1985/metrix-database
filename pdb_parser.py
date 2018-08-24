@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import division
 
 class PDBParser(object):
@@ -47,7 +48,7 @@ class PDBParser(object):
         if 'BIN' in line:
             continue
         if line[0] == 'HEADER':
-          assert pdb_id == line[-1]
+          assert pdb_id == line[-1], "Expected %s, got %s" % (pdb_id, line[-1])
         if lineCheck('REMARK 3 PROGRAM',line):
           program = statRetreive(line)
         if lineCheck('REMARK 3 HIGH RESOLUTION RANGE (ANGSTROMS)',line):
