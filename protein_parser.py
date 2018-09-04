@@ -4,7 +4,7 @@ import PyPDF2
 import sqlite3
 import textract
 
-class PDBParser(object):
+class ProteinParser(object):
   '''
   A class to parse a pdb file
 
@@ -37,7 +37,7 @@ class PDBParser(object):
       WHERE PDB_id.pdb_id="%s"
     ''' % (pdb_id))
 
-  def add_entry(self, pdb_id, filename):
+  def add_protein(self, pdb_id, filename):
     '''
     Add the pdb entry to the database
 

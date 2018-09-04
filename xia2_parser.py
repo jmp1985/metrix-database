@@ -15,7 +15,7 @@ class XIA2Parser(object):
   '''
   def __init__(self, handle):
     '''
-    Init the class
+    Init the class with the handle
 
     '''
     import sqlite3
@@ -24,8 +24,7 @@ class XIA2Parser(object):
 
   def _select_id_from_pdb_id(self, pdb_id):
     '''
-    FIXME WHAT DOES THIS DO
-
+    Find individual id for a PDB code in table PDB_id
     '''
     self.cur.execute('''
       SELECT id FROM PDB_id WHERE PDB_id.pdb_id="%s"
@@ -34,8 +33,8 @@ class XIA2Parser(object):
 
   def _insert_or_ignore_into_sweeps(self, pdb_id):
     '''
-    FIXME WHAT DOES THIS DO
-
+    Find the SWEEPS and their IDs that belong to a particular
+    PDB_id
     '''
     self.cur.execute('''
       INSERT OR IGNORE INTO SWEEPS
@@ -45,8 +44,8 @@ class XIA2Parser(object):
 
   def _select_id_from_sweeps(self, pdb_pk):
     '''
-    FIXME WHAT DOES THIS DO
-
+    Finding the SWEEP_ids belonging to a particular PDB_id
+    and return them
     '''
     self.cur.execute('''
       SELECT id FROM SWEEPS WHERE SWEEPS.pdb_id_id="%s"
@@ -56,8 +55,7 @@ class XIA2Parser(object):
 
   def _insert_into_sweep_id(self, name, sweep_pk):
     '''
-    FIXME WHAT DOES THIS DO
-
+    Find the column/stat name to be entered for each selected sweep_id
     '''
     self.cur.execute('''
       INSERT INTO %s (sweep_id) VALUES (%s)
@@ -65,8 +63,7 @@ class XIA2Parser(object):
 
   def _update_high_res_stats(self, name, value, sweep_pk):
     '''
-    Update high resolution stats
-
+    Update high resolution stats for a selected sweep_id
     '''
     self.cur.execute('''
       UPDATE High_Res_Stats SET %s = %s
@@ -75,8 +72,7 @@ class XIA2Parser(object):
 
   def _update_low_res_stats(self, name, value, sweep_pk):
     '''
-    Update low resolution stats
-
+    Update low resolution stats for a seleted sweep_id
     '''
     self.cur.execute('''
       UPDATE Low_Res_Stats SET %s = %s
@@ -85,8 +81,7 @@ class XIA2Parser(object):
 
   def _update_overall_stats(self, name, value, sweep_pk):
     '''
-    Update overall stats
-
+    Update overall stats for a selected sweep_id
     '''
     self.cur.execute('''
       UPDATE Overall_Stats SET %s = %s
@@ -95,8 +90,7 @@ class XIA2Parser(object):
 
   def _update_stats(self, name, overall, low, high, sweep_pk):
     '''
-    Update overall, low and high resolution stats
-
+    Update all stats for overall, low and high resolution at once
     '''
     if overall is not None:
       self._update_overall_stats(name, overall, sweep_pk)
@@ -107,8 +101,7 @@ class XIA2Parser(object):
 
   def _update_wavelength(self, sweep_pk, wavelength):
     '''
-    Update the wavelength
-
+    Update the wavelength for a given sweep_id
     '''
     self.cur.execute('''
       UPDATE SWEEPS SET wavelength = %s WHERE id = "%s"
@@ -116,8 +109,7 @@ class XIA2Parser(object):
 
   def _insert_into_dev_stats(self, sweep_pk):
     '''
-    FIXME WHAT DOES THIS DO
-
+    Enter sweep_id into Dev_stats table
     '''
     self.cur.execute('''
       INSERT INTO Dev_Stats_json (sweep_id) VALUES (%s)
@@ -125,8 +117,8 @@ class XIA2Parser(object):
 
   def _update_dev_stats_date_time(self, sweep_pk):
     '''
-    Update the timestamp
-
+    Update the timestamp for each sweep_id in
+    Dev_stat Table
     '''
     import datetime
     self.cur.execute('''
@@ -136,8 +128,7 @@ class XIA2Parser(object):
 
   def _get_number_of_executions(self, pdb_pk):
     '''
-    Get the current execution number
-
+    Get the current execution number for each sweep_id from Dev_stats
     '''
     self.cur.execute('''
       SELECT pdb_id_id FROM SWEEPS WHERE SWEEPS.pdb_id_id=%s
@@ -147,8 +138,8 @@ class XIA2Parser(object):
 
   def _update_dev_stats_execution_number(self, sweep_pk, number_of_executions):
     '''
-    Update the execution number
-
+    Update the execution number for each sweep_id and enter in Dev_stats
+    table
     '''
     self.cur.execute('''
       UPDATE Dev_Stats_json SET execution_number = "%s"
@@ -157,8 +148,7 @@ class XIA2Parser(object):
 
   def _update_dev_stats_dials_version(self, sweep_pk, dials_version):
     '''
-    Update the dials version
-
+    Update the dials version for each sweep_id
     '''
     self.cur.execute('''
       UPDATE Dev_Stats_json SET dials_version ="%s"
@@ -167,8 +157,7 @@ class XIA2Parser(object):
 
   def _update_dev_stats(self, pdb_pk, sweep_pk, dials_version):
     '''
-    Update some statistic metadata
-
+    Update some statistic metadata for each sweep_id
     '''
     self._insert_into_dev_stats(sweep_pk)
     self._update_dev_stats_date_time(sweep_pk)
@@ -381,7 +370,7 @@ class XIA2Parser(object):
 
   def add_entry(self, pdb_id, xia2_txt_filename, xia2_json_filename):
     '''
-    Add the xia2 enty
+    Add the xia2 entry
 
     '''
     # Parse the xia2.txt

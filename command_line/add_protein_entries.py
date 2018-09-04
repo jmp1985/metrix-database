@@ -58,4 +58,4 @@ if __name__ == '__main__':
     if not exists(filename):
       print "Skipping non existent file: %s" % filename
       continue
-    db.add_pdb_entry(pdb_id, filename)
+    db.add_protein_entry(pdb_id, filename)

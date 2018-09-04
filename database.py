@@ -36,6 +36,16 @@ class MetrixDB(object):
     parser = XIA2Parser(self.handle)
     parser.add_entry(pdb_id, xia2_txt_filename, xia2_json_filename)
 
+  def add_protein_entry(self, pdb_id, filename):
+    '''
+    Add a protein entry to the database
+
+    '''
+    from metrix_db.protein_parser import ProteinParser
+    parser = ProteinParser(self.handle)
+    parser.add_protein(pdb_id, filename)
+
+
   def write_csv(self, filename):
     '''
     Write a CSV file from the database

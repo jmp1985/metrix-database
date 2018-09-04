@@ -40,6 +40,9 @@ class CSVWriter(object):
       'Completeness',
       'Number_of_Reflections',
       'R_Value',
+      'R_free',
+      'Num_Atoms',
+      'Wilson_B',
       'Experiment_Type'
       'Date_of_Collection',
       'Synchrotron_(Y/N)',
@@ -54,6 +57,7 @@ class CSVWriter(object):
       'R_Merge',
       'R_Sym',
       'I/SIGMA',
+      'Phasing_method',
       'Solvent_Content',
       'Matthews_Coefficient']
 

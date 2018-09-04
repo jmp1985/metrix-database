@@ -27,16 +27,16 @@ processing_statistic_name_mapping = {
 
 
 # A mapping of phasing statistics
-phasing_statistic_name_mapping = {
-  'CC'          : 'cc_all_best',
-  'CC(weak)'    : 'cc_weak_best',
-  'CFOM'        : 'CFOM_best',
-  'Best trace'  : 'cc_best_build_o',
-  'Best trace'  : 'cc_best_build_i',
-  'TFZ'         : 'TFZ',
-  'LLG'         : 'LLG',
-  'eLLG'        : 'eLLG'
-}
+#phasing_statistic_name_mapping = {
+#  'CC'          : 'cc_all_best',
+#  'CC(weak)'    : 'cc_weak_best',
+#  'CFOM'        : 'CFOM_best',
+#  'Best trace'  : 'cc_best_build_o',
+#  'Best trace'  : 'cc_best_build_i',
+#  'TFZ'         : 'TFZ',
+#  'LLG'         : 'LLG',
+#  'eLLG'        : 'eLLG'
+#}
 
 
 class Initialiser(object):
@@ -85,7 +85,9 @@ class Initialiser(object):
       DROP TABLE IF EXISTS SWEEPS;
       DROP TABLE IF EXISTS Dev_Stats_PDB;
       DROP TABLE IF EXISTS Dev_Stats_json;
-      DROP TABLE IF EXISTS Phasing;
+      DROP TABLE IF EXISTS EP_Phasing;
+      DROP TABLE IF EXISTS MR_Phasing;
+      DROP TABLE IF EXISTS Protein;
 
       CREATE TABLE PDB_id (
           id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
@@ -128,10 +130,19 @@ class Initialiser(object):
           dials_version TEXT,
           FOREIGN KEY (sweep_id) REFERENCES SWEEP(id)
       );
-      CREATE TABLE Phasing (
+      CREATE TABLE EP_Phasing (
+          pdb_id_id INTEGER,
+          ep_phasing_success INTEGER,
+          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+      );
+      CREATE TABLE MR_Phasing (
           pdb_id_id INTEGER,
           mr_phasing_success INTEGER,
-          ep_phasing_success INTEGER,
+          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+      );
+      CREATE TABLE Protein (
+          pdb_id_id INTEGER,
+          protein INTEGER,
           FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
       )
       ''')
@@ -144,7 +155,5 @@ class Initialiser(object):
         ALTER TABLE Low_Res_Stats ADD %s TEXT;
         ALTER TABLE Overall_Stats ADD %s TEXT''' % (stat, stat, stat))
 
-    # Add the phasing statistics
-    for stat in phasing_statistic_name_mapping.values():
-        cur.executescript('''
-        ALTER TABLE Phasing ADD %s TEXT''' % (stat))
+        
+

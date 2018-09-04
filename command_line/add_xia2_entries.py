@@ -32,7 +32,7 @@ if __name__ == '__main__':
     '--directory',
     dest    = 'directory',
     type    = str,
-    help    = 'the pdb id directory',
+    help    = 'the processing directory',
     default = '/dls/tmp/ghp45345/xia2_stresstest')
 
   # Parse the arguments

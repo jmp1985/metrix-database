@@ -30,7 +30,7 @@ if __name__ == '__main__':
     '--directory',
     dest    = 'directory',
     type    = str,
-    help    = 'the pdb id directory',
+    help    = 'the PDB coordinates directory',
     default = '/dls/metrix/metrix/PDB_coordinates')
 
   # Parse the arguments

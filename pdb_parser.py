@@ -8,7 +8,7 @@ class PDBParser(object):
   '''
   def __init__(self, handle):
     '''
-    Initialise with the handle
+    Initialise the class with the handle
 
     '''
     self.handle = handle
@@ -41,6 +41,11 @@ class PDBParser(object):
     print 'Reading: %s for pdb id: %s' % (filename, pdb_id)
     with open(filename) as infile:
 
+      atom_num = 'NaN'
+      wilson_b = 'NaN'
+      method = 'NaN'
+      solvent_content = 'NaN'
+
       # Assigns required statistics to their pointers
       for line in infile.readlines():
         line = line.split()
@@ -51,9 +56,9 @@ class PDBParser(object):
           assert pdb_id == line[-1], "Expected %s, got %s" % (pdb_id, line[-1])
         if lineCheck('REMARK 3 PROGRAM',line):
           program = statRetreive(line)
-        if lineCheck('REMARK 3 HIGH RESOLUTION RANGE (ANGSTROMS)',line):
+        if lineCheck('REMARK 3 RESOLUTION RANGE HIGH (ANGSTROMS)',line):
           resolution_range_high = statRetreive(line)
-        if lineCheck('REMARK 3 LOW RESOLUTION RANGE (ANGSTROMS)',line):
+        if lineCheck('REMARK 3 RESOLUTION RANGE LOW (ANGSTROMS)',line):
           resolution_range_low = statRetreive(line)
         if lineCheck('REMARK 3 COMPLETENESS FOR RANGE', line):
           completeness = statRetreive(line)
@@ -69,50 +74,51 @@ class PDBParser(object):
             continue
           else:
             free_r_value = statRetreive(line)
-        if lineCheck('REMARK 3 BOND LENGTHS', line): # There is more than one value here...
-          pass
-        if lineCheck('REMARK 3 BOND ANGLES', line):
-          pass
-        if lineCheck('REMARK 200 EXPERIMENT TYPE', line):
-          experiment_type = statRetreive(line)
+        if lineCheck('REMARK 3 PROTEIN ATOMS', line):
+          atom_num = statRetreive(line)
+        if lineCheck('REMARK 3 FROM WILSON PLOT (A**2)', line):
+          wilson_b = statRetreive(line)
         if lineCheck('REMARK 200 DATE OF DATA COLLECTION', line):
           date_of_collection = statRetreive(line)
         if lineCheck('REMARK 200 SYNCHROTRON', line):
           synchrotron = statRetreive(line)
-        if lineCheck('REMARK 200 RADIATION SOURCE', line):
+        if lineCheck('REMARK 200  RADIATION SOURCE               :', line):
           radiation_source = statRetreive(line)
         if lineCheck('REMARK 200 BEAMLINE', line):
-            beamline = statRetreive(line)
-        if lineCheck('REMARK 200 WAVELENGTH OR RANGE', line):
-            wavelength_or_range = statRetreive(line)
+          beamline = statRetreive(line)
+        if lineCheck('REMARK 200  WAVELENGTH OR RANGE        (A) ', line):
+          wavelength_or_range = statRetreive(line)
         if lineCheck('REMARK 200 DETECTOR TYPE', line):
-            detector_type = statRetreive(line)
+          detector_type = statRetreive(line)
         if lineCheck('REMARK 200 DETECTOR MANUFACTURER', line):
-            detector_manufacturer = statRetreive(line)
-        if lineCheck('REMARK 200 INTENSITY-INTEGRATION SOFTWARE', line):
-            intensity_software = statRetreive(line)
+          detector_manufacturer = statRetreive(line)
+        if lineCheck('REMARK 200  INTENSITY-INTEGRATION SOFTWARE :', line):
+          intensity_software = statRetreive(line)
         if lineCheck('REMARK 200 DATA SCALING SOFTWARE', line):
-            data_scaling_software = statRetreive(line)
+          data_scaling_software = statRetreive(line)
         if lineCheck('REMARK 200 DATA REDUNDANCY', line):
-            data_redundancy = statRetreive(line)
+          data_redundancy = statRetreive(line)
         if lineCheck('REMARK 200 R MERGE', line):
-            r_merge = statRetreive(line)
+          r_merge = statRetreive(line)
         if lineCheck('REMARK 200 R SYM', line):
-            r_sym = statRetreive(line)
+          r_sym = statRetreive(line)
         if lineCheck('REMARK 200 <I/SIGMA(I)> FOR THE DATA', line):
-            i_over_sigma = statRetreive(line)
-        if lineCheck('REMARK 280 SOLVENT CONTENT', line):
-            solvent_content = line[len(line) - 1]
+          i_over_sigma = statRetreive(line)
+        if lineCheck('REMARK 200 METHOD USED TO DETERMINE THE STRUCTURE:', line):
+          method = statRetreive(line)
+        if lineCheck('REMARK 280 SOLVENT CONTENT, VS', line):
+          solvent_content = line[len(line) - 1]
         if lineCheck('REMARK 280 MATTHEWS COEFFICIENT, VM', line):
-            matthews_coefficient = line[len(line) - 1]
+          matthews_coefficient = line[len(line) - 1]
         if line[0] == 'CRYST1':
             info = line[1:]
+
 
       # What to do if this script cannot find the variable?
       # - Could add initialised variables to a list?
       # - Then add them to the dictionary
       # - Main issue seems to be with solvent_content
-
+      
       pdb_data = {
         'Program'                        : program,
         'Resolution_Range_High'          : resolution_range_high,
@@ -120,12 +126,14 @@ class PDBParser(object):
         'Completeness'                   : completeness,
         'Number_of_Reflections'          : number_of_reflections,
         'R_Value'                        : r_value,
-        'Experiment_Type'                : experiment_type,
+        'R_free'                         : free_r_value,
+        'Num_Atoms'                      : atom_num,
+        'Wilson_B'                       : wilson_b,
         'Date_of_Collection'             : date_of_collection,
         'Synchrotron_(Y/N)'              : synchrotron,
         'Radiation_Source'               : radiation_source,
         'Beamline'                       : beamline,
-        'Wavlength_or_Range'             : wavelength_or_range,
+        'Wavelength_or_Range'            : wavelength_or_range,
         'Detector_Type'                  : detector_type,
         'Detector_Manufacturer'          : detector_manufacturer,
         'Intensity_Integration_Software' : intensity_software,
@@ -134,8 +142,9 @@ class PDBParser(object):
         'R_Merge'                        : r_merge,
         'R_Sym'                          : r_sym,
         'I/SIGMA'                        : i_over_sigma,
-        'Solvent_Content'                : "solvent_content", # Temporary fix, this field seems to missing on most pdb files.
-        'Matthews_Coefficient'           : matthews_coefficient,
+        'Phasing_method'                 : method,
+        'Solvent_Content'                : solvent_content, 
+        'Matthews_Coefficient'           : matthews_coefficient
       }
 
       # Inserts acquired information into relevant tables
