@@ -142,7 +142,6 @@ class Initialiser(object):
       );
       CREATE TABLE Protein (
           pdb_id_id INTEGER,
-          protein INTEGER,
           FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
       )
       ''')

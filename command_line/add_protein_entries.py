@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
   # Loop through the pdbs and add protein details for each entry to the database
   for pdb_id in pdb_id_list:
-    filename = join(args.directory, "%s_protparam.pdf" % pdb_id)
+    filename = join(args.directory, "%s.fasta" % pdb_id)
     if not exists(filename):
       print "Skipping non existent file: %s" % filename
       continue
