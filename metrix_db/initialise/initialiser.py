@@ -37,7 +37,12 @@ class Initialiser(object):
     # Execute the commands to initialise the table
     cur.executescript('''
       DROP TABLE IF EXISTS pdb_id;
-      DROP TABLE IF EXISTS pdb_id_stats;
+      DROP TABLE IF EXISTS pdb_id_software;
+      DROP TABLE IF EXISTS pdb_id_experiment;
+      DROP TABLE IF EXISTS pdb_id_datareduction_overall;
+      DROP TABLE IF EXISTS pdb_id_crystal;
+      DROP TABLE IF EXISTS pdb_id_refinement_overall;
+      DROP TABLE IF EXISTS pdb_id_protein;
       DROP TABLE IF EXISTS proc_high_res_stats;
       DROP TABLE IF EXISTS proc_low_res_stats;
       DROP TABLE IF EXISTS proc_overall_stats;
@@ -53,10 +58,31 @@ class Initialiser(object):
           pdb_id  TEXT UNIQUE,
           data_type TEXT
       );
-      CREATE TABLE pdb_id_Stats (
+      CREATE TABLE pdb_id_experiment (
           pdb_id_id INTEGER,
           FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
       );
+      CREATE TABLE pdb_id_datareduction_overall (
+          pdb_id_id INTEGER,
+          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+      );
+      CREATE TABLE pdb_id_crystal (
+          pdb_id_id INTEGER,
+          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+      );
+      CREATE TABLE pdb_id_refinement_overall (
+          pdb_id_id INTEGER,
+          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+      );
+      CREATE TABLE pdb_id_protein (
+          pdb_id_id INTEGER,
+          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+      );      
+      CREATE TABLE pdb_id_software (
+          pdb_id_id INTEGER,
+          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+      );
+
       CREATE TABLE sweeps (
           id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
           pdb_id_id INTEGER,
