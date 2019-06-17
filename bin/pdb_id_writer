@@ -1,0 +1,7 @@
+#!/bin/env python3
+
+from metrix_db.command_line import pdb_id_writer
+
+if __name__=='__main__':
+  pdb_id_writer
+
