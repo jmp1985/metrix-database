@@ -1,7 +1,0 @@
-#!/bin/env python3
-
-from metrix_db.initialise import database
-
-if __name__=='__main__':
-  database
-  print(database)
