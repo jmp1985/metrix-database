@@ -32,13 +32,18 @@ class PDBParser(object):
     print('Reading: %s for software details: %s' % (filename, pdb_id))
     with open(filename) as infile:
       # Assigns required statistics to their pointers
+
+
       for line in infile.readlines():
         line = line.split()
         
         # Software entries
         if lineCheck('REMARK 3 PROGRAM', line):
           refinement_software = line[4]
-          refinement_software_version = line[5]
+        if lineCheck('REMARK 3 PROGRAM', line):
+           refinement_software_version = line[5]
+        else:
+          refinement_software_version = 'NULL'
         if lineCheck('REMARK 200 SOFTWARE USED:', line):
           phasing_software = line[-1]
         if lineCheck('REMARK 200 DATA SCALING SOFTWARE', line):
@@ -60,24 +65,45 @@ class PDBParser(object):
           else:
             detector_type = 'CCD'
         if lineCheck('REMARK 200  DETECTOR TYPE', line):
-          print(line)
-          matching = [s for s in line if "PILATUS" in s]
-          print(matching)
-          if str(matching).strip("(") == 'PILATUS':
-            detector_model = 'PILATUS'
-            print(detector_model)
-#          elif '6M' in line:
-#            detector_model = 'PILATUS_6M'
-#            print(detector_model)
-          #detector_type = line[-3]
-          #if detector_type == 'PILATUS':
-          #  detector_model_a = str(line[6]).strip("(")
-          #  detector_model_b = str(line[7]).strip(")")
-          #  detector_model = detector_model_a+'_'+detector_model_b
-          #else:
-          #  detector_model = 'NULL'
+          matching_1 = [s for s in line if "PILATUS" in s]
+          matching_1 = ''.join(matching_1)
+          matching_2 = [s for s in line if "6M" in s]
+          matching_2 = ''.join(matching_2)
+          if str(matching_1).strip("(") == 'PILATUS' and str(matching_2).strip("-F)") == '6M':
+            detector_model = 'PILATUS_6M'
+          else:
+            pass
         if lineCheck('REMARK 200  DETECTOR MANUFACTURER', line):
-          detector_manufacturer = line[-1]
+          if '325' and 'MM' in line:
+            detector_model = '325_MM'
+          else:
+            pass        
+        if lineCheck('REMARK 200  DETECTOR MANUFACTURER', line):
+          if 'QUANTUM' and '210' in line:
+            detector_model = 'QUANTUM_210'
+          if 'QUANTUM' and '315' in line:
+            detector_model = 'QUANTUM_315'
+          else:
+            detector_model = 'CCD'        
+
+        if lineCheck('REMARK 200  DETECTOR MANUFACTURER', line):
+          if 'PILATUS' and '6M' in line:
+            detector_model = 'PILATUS_6M'
+          else:
+            pass
+        if lineCheck('REMARK 200  DETECTOR MANUFACTURER', line):
+          if 'DECTRIS' in line:
+            detector_manufacturer = 'DECTRIS'        
+        if lineCheck('REMARK 200  DETECTOR MANUFACTURER', line):
+          if 'MARMOSAIC' in line:
+            detector_manufacturer = 'MARMOSAIC'
+        if lineCheck('REMARK 200  DETECTOR MANUFACTURER', line):
+          if 'ADSC' in line:
+            detector_manufacturer = 'ADSC'
+          match1 = [s for s in line if "ADSC" in s]
+          match1 = ''.join(match1)
+          if str(match1).strip(";") == 'ADSC':
+            detector_manufacturer = 'ADSC'
         if lineCheck('REMARK 200  WAVELENGTH OR RANGE', line):
           wave_list = []
           for wave in line[7:]:
@@ -113,50 +139,254 @@ class PDBParser(object):
             wavelength_3 = waves[2]
             wavelength_4 = waves[3]
             wavelength_5 = waves[4]             
+        if lineCheck('REMARK 200  TEMPERATURE', line):
+          temp_K = line[-1]
+        if lineCheck('REMARK 200  NUMBER OF UNIQUE REFLECTIONS', line):
+          totalunique = line[-1]
+        if lineCheck('REMARK 200  RESOLUTION RANGE HIGH', line):
+          highreslimit = line[-1]
+        if lineCheck('REMARK 200  RESOLUTION RANGE LOW', line):
+          lowreslimit = line[-1]
+        if lineCheck('REMARK 200  COMPLETENESS FOR RANGE', line):
+          completeness = line[-1]
+        if lineCheck('REMARK 200  DATA REDUNDANCY', line):
+          multiplicity = line[-1]
+        if lineCheck('REMARK 200  R MERGE', line):
+          rmerge = line[-1]
+        if lineCheck('REMARK 200  R SYM', line):
+          rsym = line[-1]
+        if lineCheck('REMARK 200  <I/SIGMA(I)> FOR THE DATA SET', line):
+          ioversigma = line[-1]
+        if lineCheck('REMARK 280 SOLVENT CONTENT, VS', line):
+          solvent_content = line[-1]
+        if lineCheck('REMARK 280 MATTHEWS COEFFICIENT, VM', line):
+          matth_coeff = line[-1]
+        if lineCheck('CRYST1', line):
+          cell_a = line[1]
+          cell_b = line[2]
+          cell_c = line[3]
+          cell_alpha = line[4]
+          cell_beta = line[5]
+          cell_gamma = line[6]
+          space_group = line[7:-1]
+          space_group = ''.join(space_group)
+        if lineCheck('REMARK   3   PROTEIN ATOMS', line):
+          prot_atoms = line[-1]
+        else:
+            prot_atoms = 'NULL'
+        if lineCheck('REMARK   3   NUCLEIC ACID ATOMS', line):
+          nuc_acid_atoms = line[-1]
+        else:
+          nuc_acid_atoms = 'NULL'
+        if lineCheck('REMARK   3   HETEROGEN ATOMS', line):
+          het_atoms = line[-1]
+        else:
+          het_atoms = 'NULL'
+        if lineCheck('REMARK   3   SOLVENT ATOMS', line):
+          sol_atoms = line[-1]
+        else:
+          sol_atoms = 'NULL'
+        if lineCheck('REMARK   3   RESOLUTION RANGE HIGH', line):
+          highreslimit_refine = line[-1]
+        if lineCheck('REMARK   3   RESOLUTION RANGE LOW', line):
+          lowreslimit_refine = line[-1]
+        if lineCheck('REMARK   3   COMPLETENESS FOR RANGE', line) or lineCheck('REMARK   3   COMPLETENESS (WORKING+TEST)', line):
+          completeness_refine = line[-1]
+        if lineCheck('REMARK   3   NUMBER OF REFLECTIONS', line):
+          reflections = line[-1]
+        if lineCheck('REMARK   3   R VALUE            (WORKING SET)', line):
+          rwork = line[-1]
+        if lineCheck('REMARK   3   FREE R VALUE                     :', line):
+          rfree = line[-1]
+        if lineCheck('REMARK   3   FREE R VALUE TEST SET SIZE', line):
+          rfree_size_per = line[-1]
+        if lineCheck('REMARK   3   FROM WILSON PLOT', line):
+          wilsonb = line[-1]
+        if lineCheck('REMARK   3   MEAN B VALUE', line):
+          meanb = line[-1]
+        if lineCheck('REMARK   3   CORRELATION COEFFICIENT FO-FC      :', line):
+          if "FREE" in line:
+            fofc_cc_free = line[-1]
+          else:
+            fofc_cc = line[-1]
+        if lineCheck('REMARK   3   NUMBER OF DIFFERENT NCS GROUPS', line):
+          no_ncs = line[-1]
+        else:
+          no_ncs = 'NULL'  
+        if lineCheck('REMARK   3   NUMBER OF TLS GROUPS', line):
+          no_tls = line[-1]
+        if lineCheck('DBREF', line):
+          if "A" in line:
+            uniprot_prot1 = line[6]
+            startres_prot1 = line[-2]
+            endres_prot1 = line[-1]
+          if "B" in line:
+            uniprot_prot2 = line[6]
+            startres_prot2 = line[-2]
+            endres_prot2 = line[-1]
+          else:
+            uniprot_prot2 = 'NULL'
+            startres_prot2 = 'NULL'
+            endres_prot2 = 'NULL'  
+          if "C" in line:
+            uniprot_prot3 = line[6]
+            startres_prot3 = line[-2]
+            endres_prot3 = line[-1]
+          else:
+            uniprot_prot3 = 'NULL'
+            startres_prot3 = 'NULL'
+            endres_prot3 = 'NULL'
+          if "D" in line:
+            uniprot_prot4 = line[6]
+            startres_prot4 = line[-2]
+            endres_prot4 = line[-1]
+          else:
+            uniprot_prot4 = 'NULL'
+            startres_prot4 = 'NULL'
+            endres_prot4 = 'NULL'
+          if "E" in line:
+            uniprot_prot5 = line[6]
+            startres_prot5 = line[-2]
+            endres_prot5 = line[-1]
+          else:
+            uniprot_prot5 = 'NULL'
+            startres_prot5 = 'NULL'
+            endres_prot5 = 'NULL'
+
 
       pdb_id_software = {
-                          'integration_software': integration_software,
-                          'scaling_software': scaling_software,
-                          'phasing_software'            : phasing_software,
-                          'refinement_software'         : refinement_software,
-                          'refinement_software_version' : refinement_software_version
+          'integration_software'        : integration_software,
+          'scaling_software'            : scaling_software,
+          'phasing_software'            : phasing_software,
+          'refinement_software'         : refinement_software,
+          'refinement_software_version' : refinement_software_version
                           }
 
       pdb_id_experiment = {
-                           'synchrotron': synchrotron,
-                           'radiation_source': radiation_source,
-                           'beamline': beamline,
-                           'detector_type': detector_type,
-                           #'detector_model': detector_model,
-                           'detector_manufacturer': detector_manufacturer,
-                           'wavelength_1': wavelength_1,
-                           'wavelength_2': wavelength_2,
-                           'wavelength_3': wavelength_3,
-                           'wavelength_4': wavelength_4,
-                           'wavelength_5': wavelength_5,
-                           #'temp_K':
+          'synchrotron'            : synchrotron,
+          'radiation_source'       : radiation_source,
+          'beamline'               : beamline,
+          'detector_type'          : detector_type,
+          'detector_model'         : detector_model,
+          'detector_manufacturer'  : detector_manufacturer,
+          'wavelength_1'           : wavelength_1,
+          'wavelength_2'           : wavelength_2,
+          'wavelength_3'           : wavelength_3,
+          'wavelength_4'           : wavelength_4,
+          'wavelength_5'           : wavelength_5,
+          'temp_K'                 : temp_K
                            }
 
+      pdb_id_datareduction_overall = {
+          'totalunique'   : totalunique,
+          'highreslimit'  : highreslimit,
+          'lowreslimit'   : lowreslimit,
+          'completeness'  : completeness,
+          'multiplicity'  : multiplicity,
+          'rmerge'        : rmerge,
+          'rsym'          : rsym,
+          'ioversigma'    : ioversigma
+                                       }
+
+      pdb_id_crystal = {
+          'solvent_content' : solvent_content,
+          'matth_coeff'     : matth_coeff,
+          'space_group'     : space_group,
+          'cell_a'          : cell_a,
+          'cell_b'          : cell_b,
+          'cell_c'          : cell_c,
+          'cell_alpha'      : cell_alpha,
+          'cell_beta'       : cell_beta,
+          'cell_gamma'      : cell_gamma,
+          'prot_atoms'      : prot_atoms,
+          'nuc_acid_atoms'  : nuc_acid_atoms,
+          'het_atoms'       : het_atoms,
+          'sol_atoms'       : sol_atoms
+      }
+
+      pdb_id_refinement_overall = {
+          'reflections'   : reflections,
+          'highreslimit'  : highreslimit_refine,
+          'lowreslimt'    : lowreslimit_refine,
+          'completeness'  : completeness_refine,
+          'rwork'         : rwork,
+          'rfree'         : rfree,
+          'rfree_size_per': rfree_size_per,
+          'wilsonb'       : wilsonb,
+          'meanb'         : meanb,
+          'fofc_cc'       : fofc_cc,
+          'fofc_cc_free'  : fofc_cc_free,
+          'no_ncs'        : no_ncs,
+          'no_tls'        : no_tls
+                                   }
+
+      pdb_id_protein = {
+          'uniprot_id_prot1'    : uniprot_prot1,
+          'startres_prot1'      : startres_prot1,
+          'endres_prot1'        : endres_prot1,
+          'uniprot_id_prot2'    : uniprot_prot2,
+          'startres_prot2'      : startres_prot2,
+          'endres_prot2'        : endres_prot2,
+          'uniprot_id_prot3'    : uniprot_prot3,
+          'startres_prot3'      : startres_prot3,
+          'endres_prot3'        : endres_prot3,
+          'uniprot_id_prot4'    : uniprot_prot4,
+          'startres_prot4'      : startres_prot4,
+          'endres_prot4'        : endres_prot4,
+          'uniprot_id_prot4'    : uniprot_prot5,
+          'startres_prot4'      : startres_prot5,
+          'endres_prot4'        : endres_prot5                  
+                  
+                  
+                        }
 
       # Inserts acquired information into relevant tables
       # Inserts pdb_id
       cur.executescript( '''
-        INSERT OR IGNORE INTO PDB_id
+        INSERT OR IGNORE INTO pdb_id
         (pdb_id) VALUES ("%s");
-        INSERT OR IGNORE INTO PDB_id_software
-        (pdb_id_id)  SELECT id FROM PDB_id
-        WHERE PDB_id.pdb_id="%s";
+        INSERT OR IGNORE INTO pdb_id_software
+        (pdb_id_id)  SELECT id FROM pdb_id
+        WHERE pdb_id.pdb_id="%s";
         '''% (pdb_id, pdb_id))
       cur.executescript( '''
-        INSERT OR IGNORE INTO PDB_id
+        INSERT OR IGNORE INTO pdb_id
         (pdb_id) VALUES ("%s");
-        INSERT OR IGNORE INTO PDB_id_experiment
-        (pdb_id_id)  SELECT id FROM PDB_id
-        WHERE PDB_id.pdb_id="%s";
+        INSERT OR IGNORE INTO pdb_id_experiment
+        (pdb_id_id)  SELECT id FROM pdb_id
+        WHERE pdb_id.pdb_id="%s";
+      ''' % (pdb_id, pdb_id))
+      cur.executescript( '''
+        INSERT OR IGNORE INTO pdb_id
+        (pdb_id) VALUES ("%s");
+        INSERT OR IGNORE INTO pdb_id_datareduction_overall
+        (pdb_id_id)  SELECT id FROM pdb_id
+        WHERE pdb_id.pdb_id="%s";
+      ''' % (pdb_id, pdb_id))
+      cur.executescript( '''
+        INSERT OR IGNORE INTO pdb_id
+        (pdb_id) VALUES ("%s");
+        INSERT OR IGNORE INTO pdb_id_crystal
+        (pdb_id_id)  SELECT id FROM pdb_id
+        WHERE pdb_id.pdb_id="%s";
+      ''' % (pdb_id, pdb_id))
+      cur.executescript( '''
+        INSERT OR IGNORE INTO pdb_id
+        (pdb_id) VALUES ("%s");
+        INSERT OR IGNORE INTO pdb_id_refinement_overall
+        (pdb_id_id)  SELECT id FROM pdb_id
+        WHERE pdb_id.pdb_id="%s";
+      ''' % (pdb_id, pdb_id))
+      cur.executescript( '''
+        INSERT OR IGNORE INTO pdb_id
+        (pdb_id) VALUES ("%s");
+        INSERT OR IGNORE INTO pdb_id_protein
+        (pdb_id_id)  SELECT id FROM pdb_id
+        WHERE pdb_id.pdb_id="%s";
       ''' % (pdb_id, pdb_id))
 
       cur.execute('''
-        SELECT id FROM PDB_id WHERE pdb_id="%s"
+        SELECT id FROM pdb_id WHERE pdb_id="%s"
       ''' % (pdb_id))
       pdb_pk = (cur.fetchone())[0]
 
@@ -165,7 +395,7 @@ class PDBParser(object):
       for data_names in pdb_id_software.keys():
         try:
           cur.executescript('''
-            ALTER TABLE PDB_id_software ADD "%s" TEXT;
+            ALTER TABLE pdb_id_software ADD "%s" TEXT;
           ''' % (data_names))
         except:
           pass
@@ -174,153 +404,80 @@ class PDBParser(object):
       for data_names in pdb_id_experiment.keys():
         try:
           cur.executescript('''
-            ALTER TABLE PDB_id_experiment ADD "%s" TEXT
+            ALTER TABLE pdb_id_experiment ADD "%s" TEXT
           ''' % (data_names))
         except:
           pass
       items = len(pdb_id_experiment)
 
+      for data_names in pdb_id_datareduction_overall.keys():
+        try:
+          cur.executescript('''
+            ALTER TABLE pdb_id_datareduction_overall ADD "%s" TEXT
+          ''' % (data_names))
+        except:
+          pass
+      items = len(pdb_id_datareduction_overall)
+
+      for data_names in pdb_id_crystal.keys():
+        try:
+          cur.executescript('''
+            ALTER TABLE pdb_id_crystal ADD "%s" TEXT
+          ''' % (data_names))
+        except:
+          pass
+      items = len(pdb_id_crystal)
+
+      for data_names in pdb_id_refinement_overall.keys():
+        try:
+          cur.executescript('''
+            ALTER TABLE pdb_id_refinement_overall ADD "%s" TEXT
+          ''' % (data_names))
+        except:
+          pass
+      items = len(pdb_id_refinement_overall)
+
+      for data_names in pdb_id_protein.keys():
+        try:
+          cur.executescript('''
+            ALTER TABLE pdb_id_protein ADD "%s" TEXT
+          ''' % (data_names))
+        except:
+          pass
+      items = len(pdb_id_protein)
+
 
       for data in pdb_id_software:
           cur.execute('''
-            UPDATE PDB_id_software SET "%s" = "%s"
+            UPDATE pdb_id_software SET "%s" = "%s"
             WHERE pdb_id_id = "%s";
             ''' % (data, pdb_id_software[data], pdb_pk ))
       for data in pdb_id_experiment:
           cur.execute('''           
-            UPDATE PDB_id_experiment SET "%s" = "%s"
+            UPDATE pdb_id_experiment SET "%s" = "%s"
             WHERE pdb_id_id = "%s";            
             ''' % (data, pdb_id_experiment[data], pdb_pk ))
+      for data in pdb_id_datareduction_overall:
+          cur.execute('''           
+            UPDATE pdb_id_datareduction_overall SET "%s" = "%s"
+            WHERE pdb_id_id = "%s";            
+            ''' % (data, pdb_id_datareduction_overall[data], pdb_pk ))
+      for data in pdb_id_crystal:
+          cur.execute('''           
+            UPDATE pdb_id_crystal SET "%s" = "%s"
+            WHERE pdb_id_id = "%s";            
+            ''' % (data, pdb_id_crystal[data], pdb_pk ))
+      for data in pdb_id_refinement_overall:
+          cur.execute('''           
+            UPDATE pdb_id_refinement_overall SET "%s" = "%s"
+            WHERE pdb_id_id = "%s";            
+            ''' % (data, pdb_id_refinement_overall[data], pdb_pk ))
+      for data in pdb_id_protein:
+          cur.execute('''           
+            UPDATE pdb_id_protein SET "%s" = "%s"
+            WHERE pdb_id_id = "%s";            
+            ''' % (data, pdb_id_protein[data], pdb_pk ))
 
       self.handle.commit()
-
-
-
-#data_scaling_software = statRetreive(line)
-
-
-#REMARK   3   PROGRAM     : REFMAC 5.7.0032
-
-#    def statRetreive(line):
-#        try:
-#          pos = [i for i,x in enumerate(line) if x == ':']
-#          #return ' '.join(line[-1:])
-#          return ' '.join(line)
-#        except:
-#          print('Could not find data for: %s' % (line))
-
-#    def printLine(line):
-#        print(' '.join(line))
-
-#    # Read the pdb file
-#    print('Reading: %s for pdb id: %s' % (filename, pdb_id))
-#    with open(filename) as infile:
-#
-#      atom_num = 'NaN'
-#      wilson_b = 'NaN'
-#      method = 'NaN'
-#      solvent_content = 'NaN'
-#
-#      # Assigns required statistics to their pointers
-#      for line in infile.readlines():
-#        line = line.split()
-#
-#        if 'BIN' in line:
-#            continue
-#        if line[0] == 'HEADER':
-#          assert pdb_id == line[-1], "Expected %s, got %s" % (pdb_id, line[-1])
-#        if lineCheck('REMARK 3 PROGRAM',line):
-#          program = statRetreive(line)
-#        if lineCheck('REMARK 3 RESOLUTION RANGE HIGH (ANGSTROMS)',line):
-#          resolution_range_high = statRetreive(line)
-#        if lineCheck('REMARK 3 RESOLUTION RANGE LOW (ANGSTROMS)',line):
-#          resolution_range_low = statRetreive(line)
-#        if lineCheck('REMARK 3 COMPLETENESS FOR RANGE', line):
-#          completeness = statRetreive(line)
-#        if lineCheck('REMARK 3 NUMBER OF REFLECTIONS',line):
-#          number_of_reflections = statRetreive(line)
-#        if lineCheck('REMARK 3 R VALUE (WORKING SET)',line):
-#          if '+' in line:
-#            continue
-#          else:
-#            r_value = statRetreive(line)
-#        if lineCheck('REMARK 3 FREE R VALUE', line):
-#          if 'TEST' in line or 'ESU' in line:
-#            continue
-#          else:
-#            free_r_value = statRetreive(line)
-#        if lineCheck('REMARK 3 PROTEIN ATOMS', line):
-#          atom_num = statRetreive(line)
-#        if lineCheck('REMARK 3 FROM WILSON PLOT (A**2)', line):
-#          wilson_b = statRetreive(line)
-#        if lineCheck('REMARK 200 DATE OF DATA COLLECTION', line):
-#          date_of_collection = statRetreive(line)
-#        if lineCheck('REMARK 200 SYNCHROTRON', line):
-#          synchrotron = statRetreive(line)
-#        if lineCheck('REMARK 200  RADIATION SOURCE               :', line):
-#          radiation_source = statRetreive(line)
-#        if lineCheck('REMARK 200 BEAMLINE', line):
-#          beamline = statRetreive(line)
-#        if lineCheck('REMARK 200  WAVELENGTH OR RANGE        (A) ', line):
-#          wavelength_or_range = statRetreive(line)
-#        if lineCheck('REMARK 200 DETECTOR TYPE', line):
-#          detector_type = statRetreive(line)
-#        if lineCheck('REMARK 200 DETECTOR MANUFACTURER', line):
-#          detector_manufacturer = statRetreive(line)
-#        if lineCheck('REMARK 200  INTENSITY-INTEGRATION SOFTWARE :', line):
-#          intensity_software = statRetreive(line)
-#        if lineCheck('REMARK 200 DATA SCALING SOFTWARE', line):
-#          data_scaling_software = statRetreive(line)
-#        if lineCheck('REMARK 200 DATA REDUNDANCY', line):
-#          data_redundancy = statRetreive(line)
-#        if lineCheck('REMARK 200 R MERGE', line):
-#          r_merge = statRetreive(line)
-#        if lineCheck('REMARK 200 R SYM', line):
-#          r_sym = statRetreive(line)
-#        if lineCheck('REMARK 200 <I/SIGMA(I)> FOR THE DATA', line):
-#          i_over_sigma = statRetreive(line)
-#        if lineCheck('REMARK 200 METHOD USED TO DETERMINE THE STRUCTURE:', line):
-#          method = statRetreive(line)
-#        if lineCheck('REMARK 280 SOLVENT CONTENT, VS', line):
-#          solvent_content = line[len(line) - 1]
-#        if lineCheck('REMARK 280 MATTHEWS COEFFICIENT, VM', line):
-#          matthews_coefficient = line[len(line) - 1]
-#        if line[0] == 'CRYST1':
-#            info = line[1:]
-
-
-      # What to do if this script cannot find the variable?
-      # - Could add initialised variables to a list?
-      # - Then add them to the dictionary
-      # - Main issue seems to be with solvent_content
-
-      
-#      pdb_data = {
-#        'Program'                        : program,
-#        'Resolution_Range_High'          : resolution_range_high,
-#        'Resolution_Range_Low'           : resolution_range_low,
-#        'Completeness'                   : completeness,
-#        'Number_of_Reflections'          : number_of_reflections,
-#        'R_Value'                        : r_value,
-#        'R_free'                         : free_r_value,
-#        'Num_Atoms'                      : atom_num,
-#        'Wilson_B'                       : wilson_b,
-#        'Date_of_Collection'             : date_of_collection,
-#        'Synchrotron_(Y/N)'              : synchrotron,
-#        'Radiation_Source'               : radiation_source,
-#        'Beamline'                       : beamline,
-#        'Wavelength_or_Range'            : wavelength_or_range,
-#        'Detector_Type'                  : detector_type,
-#        'Detector_Manufacturer'          : detector_manufacturer,
-#        'Intensity_Integration_Software' : intensity_software,
-#        'Data_Scaling_Software'          : data_scaling_software,
-#        'Data_Redundancy'                : data_redundancy,
-#        'R_Merge'                        : r_merge,
-#        'R_Sym'                          : r_sym,
-#        'I/SIGMA'                        : i_over_sigma,
-#        'Phasing_method'                 : method,
-#        'Solvent_Content'                : solvent_content, 
-#        'Matthews_Coefficient'           : matthews_coefficient
-#      }
 
 

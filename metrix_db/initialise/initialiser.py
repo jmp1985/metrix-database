@@ -60,39 +60,38 @@ class Initialiser(object):
       );
       CREATE TABLE pdb_id_experiment (
           pdb_id_id INTEGER,
-          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+          FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );
       CREATE TABLE pdb_id_datareduction_overall (
           pdb_id_id INTEGER,
-          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+          FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );
       CREATE TABLE pdb_id_crystal (
           pdb_id_id INTEGER,
-          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+          FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );
       CREATE TABLE pdb_id_refinement_overall (
           pdb_id_id INTEGER,
-          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+          FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );
       CREATE TABLE pdb_id_protein (
           pdb_id_id INTEGER,
-          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+          FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );      
       CREATE TABLE pdb_id_software (
           pdb_id_id INTEGER,
-          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+          FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );
-
       CREATE TABLE sweeps (
           id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
           pdb_id_id INTEGER,
           wavelength TEXT,
           sweep_number INTEGER,
-          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+          FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );
       CREATE TABLE proc_high_res_stats (
           sweep_id INTEGER,
-          FOREIGN KEY (sweep_id) REFERENCES SWEEP(id)
+          FOREIGN KEY (sweep_id) REFERENCES sweep(id)
       );
       CREATE TABLE proc_low_res_stats (
           sweep_id INTEGER,
@@ -100,29 +99,26 @@ class Initialiser(object):
       );
       CREATE TABLE proc_overall_stats (
           sweep_id INTEGER,
-          FOREIGN KEY (sweep_id) REFERENCES SWEEP(id)
+          FOREIGN KEY (sweep_id) REFERENCES sweep(id)
       );
       CREATE TABLE ep_stats (
           pdb_id_id INTEGER,
-          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+          FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );
       CREATE TABLE mr_stats (
           pdb_id_id INTEGER,
-          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+          FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );
       CREATE TABLE protein_stats (
           pdb_id_id INTEGER,
-          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+          FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );
       CREATE TABLE diff_exp_stats (
           pdb_id_id INTEGER,
-          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+          FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );
       CREATE TABLE anomalies_stats (
           pdb_id_id INTEGER,
-          FOREIGN KEY (pdb_id_id) REFERENCES PDB_id(id)
+          FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       )
       ''')
-
-        
-

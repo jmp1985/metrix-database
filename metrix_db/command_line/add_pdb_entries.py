@@ -1,6 +1,5 @@
 #!/bin/env python3
 
-
 from metrix_db.initialise.database import MetrixDB
 from argparse import ArgumentParser
 from os.path import join, exists
