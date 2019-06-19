@@ -29,7 +29,7 @@ class PDBParser(object):
 
 
     # Read the pdb file
-    print('Reading: %s for software details: %s' % (filename, pdb_id))
+    print('Reading: %s for PDB reference details: %s' % (filename, pdb_id))
     with open(filename) as infile:
       # Assigns required statistics to their pointers
 
@@ -38,12 +38,17 @@ class PDBParser(object):
         line = line.split()
         
         # Software entries
-        if lineCheck('REMARK 3 PROGRAM', line):
+        if lineCheck('REMARK   3   PROGRAM     :', line):
           refinement_software = line[4]
+          
         if lineCheck('REMARK 3 PROGRAM', line):
-           refinement_software_version = line[5]
-        else:
-          refinement_software_version = 'NULL'
+          length = len(line)
+          if length == 6:
+            refinement_software_version = line[5]
+          else:
+            refinement_software_version = 'NULL'
+
+
         if lineCheck('REMARK 200 SOFTWARE USED:', line):
           phasing_software = line[-1]
         if lineCheck('REMARK 200 DATA SCALING SOFTWARE', line):
@@ -59,55 +64,106 @@ class PDBParser(object):
           radiation_source = line[-1]
         if lineCheck('REMARK 200  BEAMLINE', line):
           beamline = line[-1]
+
+
         if lineCheck('REMARK 200  DETECTOR TYPE', line):
           if 'PIXEL' in line:
             detector_type = 'PIXEL'
           else:
             detector_type = 'CCD'
+
+
+        if lineCheck('REMARK 200  DETECTOR MANUFACTURER', line):
+          print(line)
+          if 'MARMOSAIC' and '325' in line:
+            detector_model = '325_MM'
+          if 'MARMOSAIC' and '300' in line:
+            detector_model = '300_MM'            
+          if 'MAR325' in line:
+            detector_model = 'MAR325'
+          if 'MAR225' in line:
+            detector_model = 'MAR225'
+          if 'QUANTUM' and '4' in line:
+            detector_model = 'QUANTUM_4'
+          if 'QUANTUM' in line:
+            detector_model = 'QUANTUM'
+          if 'QUANTUM' and '210' in line:
+            detector_model = 'QUANTUM_210'
+          if 'QUANTUM' and '315' in line:
+            detector_model = 'QUANTUM_315'
+          if 'Q315' in line:
+            detector_model = 'QUANTUM_315'            
+          if 'MX-300' in line:
+            detector_model = 'MX-300'
+          if 'PILATUS' and '6M' in line:
+            detector_model = 'PILATUS_6M'
+          if 'PILATUS' and '2M' in line:
+            detector_model = 'PILATUS_2M'
+          if 'RAXIS' and 'IV' in line:
+            detector_model = 'RAXIS_IV'
+          if line[-1] == 'ADSC':
+            detector_model = 'NULL'
+          if line[-1] == 'DECTRIS':
+            detector_model = 'NULL'
+          if line[-1] == 'MARMOSAIC':
+            detector_model = 'NULL'
+          if line[-1] == 'APS-1':
+            detector_model = 'NULL'
+          if line[-1] == 'NULL':
+            detector_model = 'NULL'
+          if line[-1] == 'MARRESEARCH':
+            detector_model = 'NULL'
+            
+          print(detector_model)
+
         if lineCheck('REMARK 200  DETECTOR TYPE', line):
           matching_1 = [s for s in line if "PILATUS" in s]
           matching_1 = ''.join(matching_1)
           matching_2 = [s for s in line if "6M" in s]
           matching_2 = ''.join(matching_2)
+          if str(matching_1).strip("(") and str(matching_1).strip(")") == 'PILATUS':
+            detector_model = 'PILATUS'            
           if str(matching_1).strip("(") == 'PILATUS' and str(matching_2).strip("-F)") == '6M':
             detector_model = 'PILATUS_6M'
-          else:
-            pass
-        if lineCheck('REMARK 200  DETECTOR MANUFACTURER', line):
-          if '325' and 'MM' in line:
-            detector_model = '325_MM'
-          else:
-            pass        
-        if lineCheck('REMARK 200  DETECTOR MANUFACTURER', line):
-          if 'QUANTUM' and '210' in line:
-            detector_model = 'QUANTUM_210'
-          if 'QUANTUM' and '315' in line:
-            detector_model = 'QUANTUM_315'
-          else:
-            detector_model = 'CCD'        
-
-        if lineCheck('REMARK 200  DETECTOR MANUFACTURER', line):
-          if 'PILATUS' and '6M' in line:
+          if str(matching_1).strip("(") == 'PILATUS' and str(matching_2).strip(")") == '6M':
             detector_model = 'PILATUS_6M'
           else:
             pass
+
+
+
         if lineCheck('REMARK 200  DETECTOR MANUFACTURER', line):
-          if 'DECTRIS' in line:
-            detector_manufacturer = 'DECTRIS'        
-        if lineCheck('REMARK 200  DETECTOR MANUFACTURER', line):
-          if 'MARMOSAIC' in line:
+          if 'MARMOSAIC' or 'MAR' in line:
             detector_manufacturer = 'MARMOSAIC'
-        if lineCheck('REMARK 200  DETECTOR MANUFACTURER', line):
+          if 'MARRESEARCH' in line:
+            detector_manufacturer = 'MARRESEARCH' 
+          if 'DECTRIS' in line:
+            detector_manufacturer = 'DECTRIS'
+          if 'DECTIRS' in line:
+            detector_manufacturer = 'DECTRIS'                   
           if 'ADSC' in line:
             detector_manufacturer = 'ADSC'
           match1 = [s for s in line if "ADSC" in s]
           match1 = ''.join(match1)
           if str(match1).strip(";") == 'ADSC':
             detector_manufacturer = 'ADSC'
+          if 'RAYONIX' in line:
+            detector_manufacturer = 'RAYONIX'
+          if 'PSI' in line:
+            detector_manufacturer = 'PSI'
+          if 'APS-1' in line:
+            detector_manufacturer = 'APS-1'
+          if 'RIGAKU' in line:
+            detector_manufacturer = 'RIGAKU'
+       
+        
+
         if lineCheck('REMARK 200  WAVELENGTH OR RANGE', line):
           wave_list = []
           for wave in line[7:]:
             wave_list.append(wave)
+            wave_list = ([wave.strip(';') for wave in wave_list])
+            wave_list = ([wave.strip(',') for wave in wave_list])
           waves = [value for wave in wave_list for value in wave.split(',')]
           if len(waves) == 1:  
             wavelength_1 = waves[0]
@@ -170,40 +226,45 @@ class PDBParser(object):
           cell_gamma = line[6]
           space_group = line[7:-1]
           space_group = ''.join(space_group)
+
         if lineCheck('REMARK   3   PROTEIN ATOMS', line):
           prot_atoms = line[-1]
-        else:
-            prot_atoms = 'NULL'
+          print(prot_atoms)
+          
+            
         if lineCheck('REMARK   3   NUCLEIC ACID ATOMS', line):
           nuc_acid_atoms = line[-1]
-        else:
-          nuc_acid_atoms = 'NULL'
+          print(nuc_acid_atoms)
+
         if lineCheck('REMARK   3   HETEROGEN ATOMS', line):
           het_atoms = line[-1]
-        else:
-          het_atoms = 'NULL'
+          print(het_atoms)
+
         if lineCheck('REMARK   3   SOLVENT ATOMS', line):
           sol_atoms = line[-1]
-        else:
-          sol_atoms = 'NULL'
+          print(sol_atoms)
+
         if lineCheck('REMARK   3   RESOLUTION RANGE HIGH', line):
           highreslimit_refine = line[-1]
         if lineCheck('REMARK   3   RESOLUTION RANGE LOW', line):
           lowreslimit_refine = line[-1]
         if lineCheck('REMARK   3   COMPLETENESS FOR RANGE', line) or lineCheck('REMARK   3   COMPLETENESS (WORKING+TEST)', line):
           completeness_refine = line[-1]
-        if lineCheck('REMARK   3   NUMBER OF REFLECTIONS', line):
+        if lineCheck('REMARK   3   NUMBER OF REFLECTIONS', line) or lineCheck('REMARK   3   TOTAL NUMBER OF REFLECTIONS   (NO CUTOFF)', line):
           reflections = line[-1]
-        if lineCheck('REMARK   3   R VALUE            (WORKING SET)', line):
+        if lineCheck('REMARK   3   R VALUE            (WORKING SET)', line) or lineCheck('REMARK   3   R VALUE          (WORKING SET, NO CUTOFF)', line):
           rwork = line[-1]
-        if lineCheck('REMARK   3   FREE R VALUE                     :', line):
+        if lineCheck('REMARK   3   FREE R VALUE                     :', line) or lineCheck('REMARK   3   FREE R VALUE                  (NO CUTOFF)', line):
           rfree = line[-1]
-        if lineCheck('REMARK   3   FREE R VALUE TEST SET SIZE', line):
+        if lineCheck('REMARK   3   FREE R VALUE TEST SET SIZE', line) or lineCheck('REMARK   3   FREE R VALUE TEST SET SIZE (%, NO CUTOFF)', line):
           rfree_size_per = line[-1]
         if lineCheck('REMARK   3   FROM WILSON PLOT', line):
           wilsonb = line[-1]
         if lineCheck('REMARK   3   MEAN B VALUE', line):
           meanb = line[-1]
+#        if lineCheck('REMARK   3   CORRELATION COEFFICIENT FO-FC      :', line) == False:
+#          fofc_cc_free = 'NULL'
+#          fofc_cc = 'NULL'         
         if lineCheck('REMARK   3   CORRELATION COEFFICIENT FO-FC      :', line):
           if "FREE" in line:
             fofc_cc_free = line[-1]
@@ -211,16 +272,14 @@ class PDBParser(object):
             fofc_cc = line[-1]
         if lineCheck('REMARK   3   NUMBER OF DIFFERENT NCS GROUPS', line):
           no_ncs = line[-1]
-        else:
-          no_ncs = 'NULL'  
         if lineCheck('REMARK   3   NUMBER OF TLS GROUPS', line):
           no_tls = line[-1]
         if lineCheck('DBREF', line):
-          if "A" in line:
+          if "A" or "O" in line:
             uniprot_prot1 = line[6]
             startres_prot1 = line[-2]
             endres_prot1 = line[-1]
-          if "B" in line:
+          if "B" or "P"  in line:
             uniprot_prot2 = line[6]
             startres_prot2 = line[-2]
             endres_prot2 = line[-1]
