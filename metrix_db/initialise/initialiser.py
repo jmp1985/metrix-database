@@ -1,3 +1,7 @@
+#!/bin/env python3
+import sqlite3
+from os.path import exists
+
 class Initialiser(object):
   '''
   A class to initialise the database
@@ -9,8 +13,6 @@ class Initialiser(object):
     Get the database handle
 
     '''
-    from os.path import exists
-    import sqlite3
 
     # Check if we need to init
     if not exists('metrix_db.sqlite') or overwrite:
@@ -55,8 +57,7 @@ class Initialiser(object):
 
       CREATE TABLE pdb_id (
           id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-          pdb_id  TEXT UNIQUE,
-          data_type TEXT
+          pdb_id  TEXT UNIQUE
       );
       CREATE TABLE pdb_id_experiment (
           pdb_id_id INTEGER,

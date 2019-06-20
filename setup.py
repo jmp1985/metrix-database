@@ -13,7 +13,10 @@ setup(
       'metrix_db'
     ],
     scripts=[
-      'bin/initialise/initialise'
+      'bin/pdb_id_writer',
+      'bin/initialise',
+      'bin/add_pdb_entries',
+      'bin/add_xia2_entries'
     ],
     install_requires=[],
     classifiers=[
