@@ -1,5 +1,4 @@
 #!/bin/env python3
-from __future__ import division
 
 class PDBParser(object):
   '''
@@ -18,8 +17,7 @@ class PDBParser(object):
     Add the pdb entry to the database
 
     '''
-    import datetime
-
+    
     def lineCheck(wordlist, line):
         wordlist = wordlist.split()
         return set(wordlist).issubset(line)
@@ -32,29 +30,38 @@ class PDBParser(object):
     print('Reading: %s for PDB reference details: %s' % (filename, pdb_id))
     with open(filename) as infile:
       # Assigns required statistics to their pointers
-
-
+      
+      no_ncs = 0
+      no_tls = 0
+      prot_atoms = 0
+      nuc_acid_atoms = 0
+      het_atoms = 0
+      sol_atoms = 0
+      fofc_cc_free = 'NULL'
+      fofc_cc = 'NULL'
+      wilsonb = 'NULL'
+      meanb = 'NULL'
+      
       for line in infile.readlines():
         line = line.split()
-        
-        # Software entries
+
+        # Software used             
         if lineCheck('REMARK   3   PROGRAM     :', line):
-          refinement_software = line[4]
-          
+          refinement_software = line[4]         
         if lineCheck('REMARK 3 PROGRAM', line):
           length = len(line)
           if length == 6:
             refinement_software_version = line[5]
           else:
             refinement_software_version = 'NULL'
-
-
         if lineCheck('REMARK 200 SOFTWARE USED:', line):
           phasing_software = line[-1]
         if lineCheck('REMARK 200 DATA SCALING SOFTWARE', line):
           scaling_software = line[-1]
         if lineCheck('REMARK 200 INTENSITY-INTEGRATION SOFTWARE', line):
           integration_software = line[-1]
+
+        # Experiment details
         if lineCheck('REMARK 200  SYNCHROTRON              (Y/N)', line):
           if 'Y' == line[-1]:
             synchrotron = 1
@@ -64,58 +71,62 @@ class PDBParser(object):
           radiation_source = line[-1]
         if lineCheck('REMARK 200  BEAMLINE', line):
           beamline = line[-1]
-
-
         if lineCheck('REMARK 200  DETECTOR TYPE', line):
           if 'PIXEL' in line:
             detector_type = 'PIXEL'
           else:
             detector_type = 'CCD'
-
-
         if lineCheck('REMARK 200  DETECTOR MANUFACTURER', line):
-          print(line)
           if 'MARMOSAIC' and '325' in line:
             detector_model = '325_MM'
-          if 'MARMOSAIC' and '300' in line:
-            detector_model = '300_MM'            
-          if 'MAR325' in line:
+          elif 'MARMOSAIC' and '300' in line:
+            detector_model = '300_MM'   
+          elif 'MARMOSAIC' and '225' in line:
+            detector_model = '225_MM'      
+          elif 'MAR' and '165' in line:
+            detector_model = '165_MM'          
+          elif 'MAR325' in line:
             detector_model = 'MAR325'
-          if 'MAR225' in line:
+          elif 'MAR225' in line:
             detector_model = 'MAR225'
-          if 'QUANTUM' and '4' in line:
+          elif 'QUANTUM' and '4' in line:
             detector_model = 'QUANTUM_4'
-          if 'QUANTUM' in line:
+          elif 'QUANTUM' in line:
             detector_model = 'QUANTUM'
-          if 'QUANTUM' and '210' in line:
+          elif 'QUANTUM' and '210' in line:
             detector_model = 'QUANTUM_210'
-          if 'QUANTUM' and '315' in line:
+          elif 'QUANTUM' and '315' in line:
             detector_model = 'QUANTUM_315'
-          if 'Q315' in line:
+          elif 'Q315' in line:
             detector_model = 'QUANTUM_315'            
-          if 'MX-300' in line:
+          elif 'MX-300' in line:
             detector_model = 'MX-300'
-          if 'PILATUS' and '6M' in line:
+          elif 'PILATUS' and '6M' in line:
             detector_model = 'PILATUS_6M'
-          if 'PILATUS' and '2M' in line:
+          elif 'PILATUS' and '2M' in line:
             detector_model = 'PILATUS_2M'
-          if 'RAXIS' and 'IV' in line:
+          elif 'RAXIS' and 'IV' in line:
             detector_model = 'RAXIS_IV'
-          if line[-1] == 'ADSC':
+          elif 'PILATUS' and '6M-F' in line:  
+            detector_model = 'PILATUS_6M'
+          elif line[-1] == 'ADSC':
             detector_model = 'NULL'
-          if line[-1] == 'DECTRIS':
+          elif line[-1] == 'DECTRIS':
             detector_model = 'NULL'
-          if line[-1] == 'MARMOSAIC':
+          elif line[-1] == 'MARMOSAIC':
             detector_model = 'NULL'
-          if line[-1] == 'APS-1':
+          elif line[-1] == 'APS-1':
             detector_model = 'NULL'
-          if line[-1] == 'NULL':
+          elif line[-1] == 'APS':
+            detector_model = 'NULL'            
+          elif line[-1] == 'NULL':
             detector_model = 'NULL'
-          if line[-1] == 'MARRESEARCH':
+          elif line[-1] == 'MARRESEARCH':
             detector_model = 'NULL'
-            
-          print(detector_model)
-
+          elif line[-1] == 'SBC':
+            detector_model = 'NULL'  
+          elif line[-1] == 'RAYONIX':
+            detector_model = 'NULL'  
         if lineCheck('REMARK 200  DETECTOR TYPE', line):
           matching_1 = [s for s in line if "PILATUS" in s]
           matching_1 = ''.join(matching_1)
@@ -129,9 +140,6 @@ class PDBParser(object):
             detector_model = 'PILATUS_6M'
           else:
             pass
-
-
-
         if lineCheck('REMARK 200  DETECTOR MANUFACTURER', line):
           if 'MARMOSAIC' or 'MAR' in line:
             detector_manufacturer = 'MARMOSAIC'
@@ -155,9 +163,6 @@ class PDBParser(object):
             detector_manufacturer = 'APS-1'
           if 'RIGAKU' in line:
             detector_manufacturer = 'RIGAKU'
-       
-        
-
         if lineCheck('REMARK 200  WAVELENGTH OR RANGE', line):
           wave_list = []
           for wave in line[7:]:
@@ -197,6 +202,8 @@ class PDBParser(object):
             wavelength_5 = waves[4]             
         if lineCheck('REMARK 200  TEMPERATURE', line):
           temp_K = line[-1]
+
+        # Data reduction details
         if lineCheck('REMARK 200  NUMBER OF UNIQUE REFLECTIONS', line):
           totalunique = line[-1]
         if lineCheck('REMARK 200  RESOLUTION RANGE HIGH', line):
@@ -213,6 +220,8 @@ class PDBParser(object):
           rsym = line[-1]
         if lineCheck('REMARK 200  <I/SIGMA(I)> FOR THE DATA SET', line):
           ioversigma = line[-1]
+
+        # Crystal details
         if lineCheck('REMARK 280 SOLVENT CONTENT, VS', line):
           solvent_content = line[-1]
         if lineCheck('REMARK 280 MATTHEWS COEFFICIENT, VM', line):
@@ -227,23 +236,15 @@ class PDBParser(object):
           space_group = line[7:-1]
           space_group = ''.join(space_group)
 
-        if lineCheck('REMARK   3   PROTEIN ATOMS', line):
+        # Refinement details
+        if lineCheck('REMARK   3   PROTEIN ATOMS            :', line):
           prot_atoms = line[-1]
-          print(prot_atoms)
-          
-            
         if lineCheck('REMARK   3   NUCLEIC ACID ATOMS', line):
           nuc_acid_atoms = line[-1]
-          print(nuc_acid_atoms)
-
         if lineCheck('REMARK   3   HETEROGEN ATOMS', line):
           het_atoms = line[-1]
-          print(het_atoms)
-
         if lineCheck('REMARK   3   SOLVENT ATOMS', line):
-          sol_atoms = line[-1]
-          print(sol_atoms)
-
+          sol_atoms = line[-1]        
         if lineCheck('REMARK   3   RESOLUTION RANGE HIGH', line):
           highreslimit_refine = line[-1]
         if lineCheck('REMARK   3   RESOLUTION RANGE LOW', line):
@@ -262,19 +263,22 @@ class PDBParser(object):
           wilsonb = line[-1]
         if lineCheck('REMARK   3   MEAN B VALUE', line):
           meanb = line[-1]
-#        if lineCheck('REMARK   3   CORRELATION COEFFICIENT FO-FC      :', line) == False:
-#          fofc_cc_free = 'NULL'
-#          fofc_cc = 'NULL'         
         if lineCheck('REMARK   3   CORRELATION COEFFICIENT FO-FC      :', line):
           if "FREE" in line:
             fofc_cc_free = line[-1]
           else:
-            fofc_cc = line[-1]
+            fofc_cc = line[-1]       
         if lineCheck('REMARK   3   NUMBER OF DIFFERENT NCS GROUPS', line):
           no_ncs = line[-1]
+          if 'NULL' in line[-1]:
+            no_ncs = 0
         if lineCheck('REMARK   3   NUMBER OF TLS GROUPS', line):
           no_tls = line[-1]
-        if lineCheck('DBREF', line):
+          if 'NULL' in line[-1]:
+            no_tls = 0
+
+        # Protein details
+        if lineCheck('DBREF  ', line) and line[0] == 'DBREF':
           if "A" or "O" in line:
             uniprot_prot1 = line[6]
             startres_prot1 = line[-2]
@@ -404,45 +408,40 @@ class PDBParser(object):
       cur.executescript( '''
         INSERT OR IGNORE INTO pdb_id
         (pdb_id) VALUES ("%s");
+        '''% (pdb_id))
+
+
+      cur.executescript( '''
         INSERT OR IGNORE INTO pdb_id_software
         (pdb_id_id)  SELECT id FROM pdb_id
         WHERE pdb_id.pdb_id="%s";
-        '''% (pdb_id, pdb_id))
+        '''% (pdb_id))
       cur.executescript( '''
-        INSERT OR IGNORE INTO pdb_id
-        (pdb_id) VALUES ("%s");
         INSERT OR IGNORE INTO pdb_id_experiment
         (pdb_id_id)  SELECT id FROM pdb_id
         WHERE pdb_id.pdb_id="%s";
-      ''' % (pdb_id, pdb_id))
+      ''' % (pdb_id))
       cur.executescript( '''
-        INSERT OR IGNORE INTO pdb_id
-        (pdb_id) VALUES ("%s");
         INSERT OR IGNORE INTO pdb_id_datareduction_overall
         (pdb_id_id)  SELECT id FROM pdb_id
         WHERE pdb_id.pdb_id="%s";
-      ''' % (pdb_id, pdb_id))
+      ''' % (pdb_id))
       cur.executescript( '''
-        INSERT OR IGNORE INTO pdb_id
-        (pdb_id) VALUES ("%s");
         INSERT OR IGNORE INTO pdb_id_crystal
         (pdb_id_id)  SELECT id FROM pdb_id
         WHERE pdb_id.pdb_id="%s";
-      ''' % (pdb_id, pdb_id))
+      ''' % (pdb_id))
       cur.executescript( '''
-        INSERT OR IGNORE INTO pdb_id
-        (pdb_id) VALUES ("%s");
         INSERT OR IGNORE INTO pdb_id_refinement_overall
         (pdb_id_id)  SELECT id FROM pdb_id
         WHERE pdb_id.pdb_id="%s";
-      ''' % (pdb_id, pdb_id))
+      ''' % (pdb_id))
       cur.executescript( '''
-        INSERT OR IGNORE INTO pdb_id
-        (pdb_id) VALUES ("%s");
         INSERT OR IGNORE INTO pdb_id_protein
         (pdb_id_id)  SELECT id FROM pdb_id
         WHERE pdb_id.pdb_id="%s";
-      ''' % (pdb_id, pdb_id))
+      ''' % (pdb_id))
+
 
       cur.execute('''
         SELECT id FROM pdb_id WHERE pdb_id="%s"
