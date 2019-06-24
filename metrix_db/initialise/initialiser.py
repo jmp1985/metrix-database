@@ -83,25 +83,36 @@ class Initialiser(object):
           pdb_id_id INTEGER,
           FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );
-      CREATE TABLE sweeps (
+      CREATE TABLE xia2_sweeps (
           id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
           pdb_id_id INTEGER,
-          wavelength TEXT,
           sweep_number INTEGER,
           FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );
-      CREATE TABLE proc_high_res_stats (
+      CREATE TABLE xia2_datareduction_overall (
           sweep_id INTEGER,
           FOREIGN KEY (sweep_id) REFERENCES sweep(id)
       );
-      CREATE TABLE proc_low_res_stats (
+      CREATE TABLE xia2_datareduction_lowres (
           sweep_id INTEGER,
           FOREIGN KEY (sweep_id) REFERENCES SWEEP(id)
       );
-      CREATE TABLE proc_overall_stats (
+      CREATE TABLE xia2_datareduction_highres (
           sweep_id INTEGER,
           FOREIGN KEY (sweep_id) REFERENCES sweep(id)
       );
+      CREATE TABLE xia2_software (
+          pdb_id_id INTEGER,
+          FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
+      );
+      CREATE TABLE xia2_experiment (
+          sweep_id INTEGER,
+          FOREIGN KEY (sweep_id) REFERENCES sweep(id)
+      );
+      CREATE TABLE xia2_crystal (
+          sweep_id INTEGER,
+          FOREIGN KEY (sweep_id) REFERENCES sweep(id)
+      );      
       CREATE TABLE ep_stats (
           pdb_id_id INTEGER,
           FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)

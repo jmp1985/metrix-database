@@ -207,20 +207,48 @@ class PDBParser(object):
         if lineCheck('REMARK 200  NUMBER OF UNIQUE REFLECTIONS', line):
           totalunique = line[-1]
         if lineCheck('REMARK 200  RESOLUTION RANGE HIGH', line):
-          highreslimit = line[-1]
+          if 'HIGHEST' in line:
+            del line[:]
+          length = len(line)
+          if length >= 8:  
+            highreslimit = line[-1]
         if lineCheck('REMARK 200  RESOLUTION RANGE LOW', line):
-          lowreslimit = line[-1]
+          if 'HIGHEST' in line:
+            del line[:]
+          length = len(line)
+          if length >= 8:  
+            lowreslimit = line[-1]
         if lineCheck('REMARK 200  COMPLETENESS FOR RANGE', line):
-          completeness = line[-1]
+          if 'SHELL' in line:
+            del line[:]
+          length = len(line)
+          if length >= 8:  
+            completeness = line[-1]
         if lineCheck('REMARK 200  DATA REDUNDANCY', line):
-          multiplicity = line[-1]
+          if 'SHELL' in line:
+            del line[:]
+          length = len(line)
+          if length >= 6:  
+            multiplicity = line[-1]
         if lineCheck('REMARK 200  R MERGE', line):
-          rmerge = line[-1]
+          if 'SHELL' in line:
+            del line[:]
+          length = len(line)
+          if length >= 7:               
+            rmerge = line[-1]
         if lineCheck('REMARK 200  R SYM', line):
-          rsym = line[-1]
+          if 'SHELL' in line:
+            del line[:]
+          length = len(line)
+          if length >= 7:                       
+            rsym = line[-1]
         if lineCheck('REMARK 200  <I/SIGMA(I)> FOR THE DATA SET', line):
-          ioversigma = line[-1]
-
+          if 'SHELL' in line:
+            del line[:]
+          length = len(line)
+          if length >= 9:                        
+            ioversigma = line[-1]
+          
         # Crystal details
         if lineCheck('REMARK 280 SOLVENT CONTENT, VS', line):
           solvent_content = line[-1]
@@ -253,12 +281,32 @@ class PDBParser(object):
           completeness_refine = line[-1]
         if lineCheck('REMARK   3   NUMBER OF REFLECTIONS', line) or lineCheck('REMARK   3   TOTAL NUMBER OF REFLECTIONS   (NO CUTOFF)', line):
           reflections = line[-1]
-        if lineCheck('REMARK   3   R VALUE            (WORKING SET)', line) or lineCheck('REMARK   3   R VALUE          (WORKING SET, NO CUTOFF)', line):
-          rwork = line[-1]
-        if lineCheck('REMARK   3   FREE R VALUE                     :', line) or lineCheck('REMARK   3   FREE R VALUE                  (NO CUTOFF)', line):
-          rfree = line[-1]
         if lineCheck('REMARK   3   FREE R VALUE TEST SET SIZE', line) or lineCheck('REMARK   3   FREE R VALUE TEST SET SIZE (%, NO CUTOFF)', line):
           rfree_size_per = line[-1]
+        if lineCheck('REMARK   3   R VALUE            (WORKING SET)', line) or lineCheck('REMARK   3   R VALUE          (WORKING SET, NO CUTOFF)', line):
+          if 'BIN' in line:
+            del line[:]
+          if 'TEST' in line:
+            del line[:]
+          length = len(line)
+          if length >= 8:
+            rwork = line[-1]
+        if lineCheck('REMARK   3   FREE R VALUE                     :', line) or lineCheck('REMARK   3   FREE R VALUE                  (NO CUTOFF)', line):
+          if 'BIN' in line:
+            del line[:]
+          if 'ESTIMATED' in line:
+            del line[:]
+          if 'BASED' in line:
+            del line[:]
+          if 'SIZE' in line:
+            del line[:]
+          if 'SELECTION' in line:
+            del line[:]
+          if 'COUNT' in line:
+            del line[:]
+          length = len(line)  
+          if length >= 7:
+            rfree = line[-1]
         if lineCheck('REMARK   3   FROM WILSON PLOT', line):
           wilsonb = line[-1]
         if lineCheck('REMARK   3   MEAN B VALUE', line):
