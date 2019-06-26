@@ -149,9 +149,7 @@ class XIA2Parser(object):
           # loop through dictionary with column labels; find corresponding stats
           # in JSON file  
           for stat, name in processing_statistic_name_mapping.items():
-#            if name == 'wilsonbfactor':
-#              if stat == 'nan':
-            if stat in result:
+           if stat in result:
               assert len(result[stat]) in [1, 3]
               if len(result[stat]) == 3:
                 overall, low, high = result[stat]
@@ -288,10 +286,10 @@ class XIA2Parser(object):
     self.cur.execute(xia2_software_query)
     xia2_software_columns = len(self.cur.fetchall())
     if xia2_software_columns == 1:
-      for names in xia2_software.keys():
+      for name in xia2_software.keys():
         self.cur.executescript('''
           ALTER TABLE xia2_software ADD "%s" TEXT;
-          ''' % (names))     
+          ''' % (name))     
     elif xia2_software_columns > 1:
       pass
 
@@ -338,7 +336,7 @@ class XIA2Parser(object):
     # Load the XIA2 Json file
     data = json.load(open(xia2_json))
 
-    xia2_experiment = {
+    xia2_crystal = {
                        '0': 'cell_a',
                        '1': 'cell_b',
                        '2': 'cell_c',
@@ -349,24 +347,124 @@ class XIA2Parser(object):
     
     # Checking whether tabels exist; if yes then just update; if no enter column
     # labels    
-    # overall data statistics
-    self.cur.execute('''SELECT count(*)
-                       FROM sqlite_master
-                       WHERE type = "table"
-                       AND name = "xia2_crystal";
-                       ''')
-    crystal_exists = self.cur.fetchone()[0]
-    if crystal_exists == 1:
-      pass
-    elif crystal_exists == 0:
-      for stat, name in xia2_experiment.items():
+    # overall data statistics    
+    crystal_query = "PRAGMA table_info(xia2_crystal)"
+    self.cur.execute(crystal_query)
+    crystal_columns = len(self.cur.fetchall())
+    if crystal_columns == 1:
+      for stat, name in xia2_crystal.items():
         self.cur.executescript('''
-          ALTER TABLE xia2_crystal ADD "%s" TEXT
-          ''' % (name))    
+          ALTER TABLE xia2_crystal ADD "%s" TEXT;
+          ''' % (name))          
+    elif crystal_columns > 1:
+      pass
+   
+    
+    self.cur.execute('''
+      SELECT id FROM pdb_id WHERE pdb_id="%s"
+      ''' % (pdb_id))
+    pdb_pk = (self.cur.fetchone())[0]
+    print(pdb_pk)
+
+    # get secondary key for sweep_id as sweep_pk  
+    self.cur.execute('''
+      SELECT id FROM xia2_sweeps WHERE xia2_sweeps.pdb_id_id="%s"
+      ''' % (pdb_pk))
+    sweep_pk = self.cur.fetchall()[-1][0]
+
+
+    crystals = data['_crystals']
+    data_type = None
+    for name in crystals.keys():
+      wavelengths = crystals[name]['_wavelengths'].keys()
+      # identify SAD data
+      if 'SAD' in wavelengths:
+        assert data_type is None or data_type == 'SAD'
+        data_type = 'SAD'
+        for crystal_name in crystals.keys():
+          # Get statistics and wavelengths
+          crystal = crystals[crystal_name]
+          if not '_scaler' in crystal or crystal['_scaler'] is None:
+            continue
+          scaler = crystal['_scaler']
+          scalr_cell_dict = scaler['_scalr_cell_dict']
+          scalr_statistics = scaler['_scalr_statistics']
+          #print(scalr_cell_dict[0])
+          result = scalr_cell_dict['AUTOMATIC_DEFAULT_SAD'][0]
+          #result = scalr_statistics['["AUTOMATIC", "%s", "SAD"]' % crystal_name]
+          print(result[0])
+          for stat, name in xia2_crystals.items():
+            if stat in result:
+              self.cur.execute('''
+                UPDATE xia2_crystal SET %s = %s
+                WHERE sweep_id = %s
+                ''' % (name, stat, sweep_pk))
+
+
+
+
+
+
+
+
+#    crystals = data['_crystals']
+#    data_type = None
+#    for name in crystals.keys():
+#      wavelengths = crystals[name]['_wavelengths'].keys()
+#      # identify SAD data
+#      if 'SAD' in wavelengths:
+#        assert data_type is None or data_type == 'SAD'
+#        data_type = 'SAD'
+#        for crystal_name in crystals.keys():
+#          # Get statistics and wavelengths
+#          crystal = crystals[crystal_name]
+#          if not '_scaler' in crystal or crystal['_scaler'] is None:
+#            continue
+#          scaler = crystal['_scaler']
+#          scalr_statistics = scaler['_scalr_statistics']
+#          wavelengths = crystal['_wavelengths']
+#          # Get the statistics and wavelength for the sweep
+#          result = scalr_statistics['["AUTOMATIC", "%s", "SAD"]' % crystal_name]
+#          wavelength = wavelengths['SAD']['_wavelength']   
+
+
+
+
+#    # get secondary key for sweep_id as sweep_pk  
+#    self.cur.execute('''
+#      SELECT id FROM xia2_sweeps WHERE xia2_sweeps.pdb_id_id="%s"
+#      ''' % (pdb_pk))
+#    sweep_pk = self.cur.fetchall()[-1][0]
+
+
+
+
+#    # enter crystal details into xia2_crystal
+#    self.cur.executescript( '''
+#      INSERT OR IGNORE INTO xia2_crystal
+#      (pdb_id_id)  SELECT id FROM pdb_id
+#      WHERE pdb_id.pdb_id="%s";
+#      '''% (pdb_pk))
+    
+#    for name in xia2_crystal:
+#      self.cur.execute('''
+#        UPDATE xia2_crystal SET "%s" = "%s"
+#        WHERE pdb_id_id = "%s";
+#        ''' % (name, xia2_crystal[name], pdb_pk))
+    
+    
+    
+    
+    
+
+
+
+
+
 
     self.handle.commit()
     
-    crystals = data['_crystals']
+    
 
 ################################################################################
 
