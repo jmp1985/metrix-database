@@ -45,19 +45,23 @@ class Initialiser(object):
       DROP TABLE IF EXISTS pdb_id_crystal;
       DROP TABLE IF EXISTS pdb_id_refinement_overall;
       DROP TABLE IF EXISTS pdb_id_protein;
-      DROP TABLE IF EXISTS proc_high_res_stats;
-      DROP TABLE IF EXISTS proc_low_res_stats;
-      DROP TABLE IF EXISTS proc_overall_stats;
-      DROP TABLE IF EXISTS sweeps;
+      DROP TABLE IF EXISTS xia2_datareduction_highres;
+      DROP TABLE IF EXISTS xia2_datareduction_lowres;
+      DROP TABLE IF EXISTS xia2_datareduction_overall;
+      DROP TABLE IF EXISTS xia2_sweeps;
+      DROP TABLE IF EXISTS xia2_software;
+      DROP TABLE IF EXISTS xia2_crystal;
+      DROP TABLE IF EXISTS xia2_experiment;
       DROP TABLE IF EXISTS ep_stats;
       DROP TABLE IF EXISTS mr_stats;
-      DROP TABLE IF EXISTS protein_stast;
-      DROP TABLE IF EXISTS diff_exp;
-      DROP TABLE IF EXISTS anomalies;
+      DROP TABLE IF EXISTS protein_stats;
+      DROP TABLE IF EXISTS diff_exp_stats;
+      DROP TABLE IF EXISTS anomalies_stats;
 
       CREATE TABLE pdb_id (
           id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-          pdb_id  TEXT UNIQUE
+          pdb_id  TEXT UNIQUE,
+          data_type TEXT
       );
       CREATE TABLE pdb_id_experiment (
           pdb_id_id INTEGER,
@@ -86,7 +90,7 @@ class Initialiser(object):
       CREATE TABLE xia2_sweeps (
           id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
           pdb_id_id INTEGER,
-          sweep_number INTEGER,
+          wavelength TEXT,
           FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );
       CREATE TABLE xia2_datareduction_overall (

@@ -55,40 +55,20 @@ db = MetrixDB()
 with open('json_output.txt', 'w') as error_log: # Used for an error counting script
   for pdb_id in pdb_id_list:
     xia2dir = join(args.directory, pdb_id)
-    filename = join(xia2dir, 'xia2.txt')
-    if not exists(filename):
-      print('Skipping non existent file: %s' % filename)
-      continue
-    db.add_xia2_entry(pdb_id, filename)  
-  
-  
+    xia2_txt = join(xia2dir, 'xia2.txt')
+    xia2_json = join(xia2dir, 'xia2.json')
 
-#     # Get the xia2 directory
-#    xia2dir = join(args.directory, pdb_id)
-#    if not exists(xia2dir):
-#      proc_dirs = sorted([d for d in listdir(args.directory) if isdir(d)])
-#      latest_proc_dir = proc_dirs[-1]
-#      xia2dir = join(args.directory, latest_proc_dir, pdb_id)
-#    if not exists(xia2dir):
-#      print('%s does not exist' % xia2dir)
-#      error_log.write('%s does not exist \n' % (xia2dir))
-#      continue
-#
-#      # Get the xia2 filenames
-#    xia2_txt_filename = join(xia2dir, "xia2.txt")
-#    xia2_json_filename = join(xia2dir, "xia2.json")
-#
-#     # If files doen't exist then skip
-#    if not exists(xia2_txt_filename):
-#      print("Skipping %s" % pdb_id)
-#      error_log.write('%s does not exist \n' % (xia2_txt_filename))
-#      continue
-#
-#    if not exists(xia2_json_filename):
-#      print("Skipping %s" % pdb_id)
-#      error_log.write('%s does not exist \n' % (xia2_json_filename))
-#      continue
-#
-#    # Add xia2 entry
-#    print("Parsing %s" % pdb_id)
-#    db.add_xia2_entry(pdb_id, xia2_txt_filename, xia2_json_filename)
+    # If files doen't exist then skip
+    if not exists(xia2_txt):
+      print("Skipping %s" % pdb_id)
+      error_log.write('%s does not exist \n' % (xia2_txt))
+      continue
+
+    if not exists(xia2_json):
+      print("Skipping %s" % pdb_id)
+      error_log.write('%s does not exist \n' % (xia2_json))
+      continue
+
+    # Add xia2 entry
+    print("Parsing %s" % pdb_id)
+    db.add_xia2_entry(pdb_id, xia2_txt, xia2_json)  
