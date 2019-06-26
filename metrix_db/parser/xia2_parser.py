@@ -283,28 +283,35 @@ class XIA2Parser(object):
                      'dials_version': dials_version,
                      'ccp4_version' : ccp4_version
                      }
-    # enter software versions into xia2_software
-    self.cur.executescript( '''
-          INSERT OR IGNORE INTO xia2_software
-          (pdb_id_id)  SELECT id FROM pdb_id
-          WHERE pdb_id.pdb_id="%s";
-          '''% (pdb_id))
 
-    # Adds necessary columns
-    for names in xia2_software.keys():
-      try:
+    xia2_software_query = "PRAGMA table_info(xia2_software)"
+    self.cur.execute(xia2_software_query)
+    xia2_software_columns = len(self.cur.fetchall())
+    if xia2_software_columns == 1:
+      for names in xia2_software.keys():
         self.cur.executescript('''
           ALTER TABLE xia2_software ADD "%s" TEXT;
-          ''' % (names))
-      except:
-        pass
-    items = len(xia2_software)    
+          ''' % (names))     
+    elif xia2_software_columns > 1:
+      pass
+
+    self.cur.execute('''
+      SELECT id FROM pdb_id WHERE pdb_id="%s"
+      ''' % (pdb_id))
+    pdb_pk = (self.cur.fetchone())[0]
+
+    # enter software versions into xia2_software
+    self.cur.executescript( '''
+      INSERT OR IGNORE INTO xia2_software
+      (pdb_id_id)  SELECT id FROM pdb_id
+      WHERE pdb_id.pdb_id="%s";
+      '''% (pdb_id))
     
-    for data in xia2_software:
-        self.cur.execute('''
-          UPDATE xia2_software SET "%s" = "%s"
-          WHERE pdb_id_id = "%s";
-          ''' % (data, xia2_software[data], pdb_id))
+    for name in xia2_software:
+      self.cur.execute('''
+        UPDATE xia2_software SET "%s" = "%s"
+        WHERE pdb_id_id = "%s";
+        ''' % (name, xia2_software[name], pdb_pk))
           
     self.handle.commit()         
 
