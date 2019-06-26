@@ -36,20 +36,6 @@ class MetrixDB(object):
     parser = XIA2Parser(self.handle)
     parser.add_entry(pdb_id, xia2_txt, xia2_json)
 
-#  def add_xia2_entry(self,
-#                     pdb_id,
-#                     xia2_txt,
-#                     automatic):
-#    '''
-#    Add a xia2 entry to the database
-#
-#    '''
-#    from metrix_db.parser.xia2_parser import XIA2Parser
-#    parser = XIA2Parser(self.handle)
-#    parser.add_entry_xia2_txt(pdb_id, xia2_txt)
-#    parser.add_entry_automatic(pdb_id, automatic)
-
-
   def add_protein_entry(self,
                         pdb_id,
                         sequence):
