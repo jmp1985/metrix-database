@@ -336,15 +336,17 @@ class XIA2Parser(object):
     # Load the XIA2 Json file
     data = json.load(open(xia2_json))
 
-    xia2_crystal = {
-                       '0': 'cell_a',
-                       '1': 'cell_b',
-                       '2': 'cell_c',
-                       '3': 'cell_alpha',
-                       '4': 'cell_beta',
-                       '5': 'cell_gamma'
+    xia2_crystal_dict = {
+                       '0' : 'cell_a',
+                       '1' : 'cell_b',
+                       '2' : 'cell_c',
+                       '3' : 'cell_alpha',
+                       '4' : 'cell_beta',
+                       '5' : 'cell_gamma'
                        }
-    
+    xia2_sg_dict = {
+                    '0' : 'likely_sg'
+                    }
     # Checking whether tabels exist; if yes then just update; if no enter column
     # labels    
     # overall data statistics    
@@ -352,33 +354,43 @@ class XIA2Parser(object):
     self.cur.execute(crystal_query)
     crystal_columns = len(self.cur.fetchall())
     if crystal_columns == 1:
-      for stat, name in xia2_crystal.items():
+      for stat, name in xia2_crystal_dict.items():
         self.cur.executescript('''
           ALTER TABLE xia2_crystal ADD "%s" TEXT;
           ''' % (name))          
+      for stat, name in xia2_sg_dict.items():        
+        self.cur.executescript('''
+          ALTER TABLE xia2_crystal ADD "%s" TEXT;
+          ''' % (name))
+        print(888, name)            
+
     elif crystal_columns > 1:
       pass
    
     
-    self.cur.execute('''
-      SELECT id FROM pdb_id WHERE pdb_id="%s"
-      ''' % (pdb_id))
-    pdb_pk = (self.cur.fetchone())[0]
-    print(pdb_pk)
-
-    # get secondary key for sweep_id as sweep_pk  
-    self.cur.execute('''
-      SELECT id FROM xia2_sweeps WHERE xia2_sweeps.pdb_id_id="%s"
-      ''' % (pdb_pk))
-    sweep_pk = self.cur.fetchall()[-1][0]
-
-
     crystals = data['_crystals']
     data_type = None
     for name in crystals.keys():
       wavelengths = crystals[name]['_wavelengths'].keys()
       # identify SAD data
+      
+      
+      
       if 'SAD' in wavelengths:
+        print('Adding SAD data to xia2_crystal')
+        self.cur.execute('''
+          SELECT id FROM pdb_id WHERE pdb_id="%s"
+          ''' % (pdb_id))
+        pdb_pk = (self.cur.fetchone())[0]
+        # get secondary key for sweep_id as sweep_pk  
+        self.cur.execute('''
+          SELECT id FROM xia2_sweeps WHERE xia2_sweeps.pdb_id_id="%s"
+          ''' % (pdb_pk))
+        sweep_pk = self.cur.fetchall()[-1][0]
+        # insert sweep_id column into table xia2_crystal        
+        self.cur.execute('''
+          INSERT INTO xia2_crystal (sweep_id) VALUES (%s)
+          ''' % (sweep_pk))      
         assert data_type is None or data_type == 'SAD'
         data_type = 'SAD'
         for crystal_name in crystals.keys():
@@ -388,70 +400,80 @@ class XIA2Parser(object):
             continue
           scaler = crystal['_scaler']
           scalr_cell_dict = scaler['_scalr_cell_dict']
-          scalr_statistics = scaler['_scalr_statistics']
-          #print(scalr_cell_dict[0])
-          result = scalr_cell_dict['AUTOMATIC_DEFAULT_SAD'][0]
-          #result = scalr_statistics['["AUTOMATIC", "%s", "SAD"]' % crystal_name]
-          print(result[0])
-          for stat, name in xia2_crystals.items():
-            if stat in result:
+          result = scalr_cell_dict['AUTOMATIC_DEFAULT_SAD'][0]      
+          for stat, name in xia2_crystal_dict.items():
+            cell = result[int(stat)]
+            if cell in result:
               self.cur.execute('''
                 UPDATE xia2_crystal SET %s = %s
                 WHERE sweep_id = %s
-                ''' % (name, stat, sweep_pk))
+                ''' % (name, cell, sweep_pk))
+          sg = scaler['_scalr_likely_spacegroups'][0]
+          sg = sg.replace(' ', '')
+          self.cur.execute('''
+            UPDATE xia2_crystal SET likely_sg="%s"
+            WHERE sweep_id = %s
+            ''' % (sg, sweep_pk))
 
 
 
+      # identify MAD data
+      elif all(w.startswith('WAVE') for w in wavelengths):
+        print('Adding MAD data to xia2_crystal')
+        self.cur.execute('''
+          SELECT id FROM pdb_id WHERE pdb_id="%s"
+          ''' % (pdb_id))
+        pdb_pk = (self.cur.fetchone())[0]
+
+        assert data_type is None or data_type == 'MAD'
+        data_type = 'MAD'
+        for crystal_name in crystals.keys():
+          # Get statistics and wavelengths
+          crystal = crystals[crystal_name]
+          if not '_scaler' in crystal or crystal['_scaler'] is None:
+            continue
+          scaler = crystal['_scaler']
+          wavelengths = crystal['_wavelengths']
+          
+          
+          scalr_cell_dict = scaler['_scalr_cell_dict']
+          scalr_statistics = scaler['_scalr_statistics']
+          # Loop through the wavelengths to get statistics for each where each
+          # wavelength usually represents one sweep
+          for wave in range(1, len(scalr_statistics.keys())+1):
+            # Get the statistics and wavelength for the sweep
+            result = scalr_cell_dict["AUTOMATIC_DEFAULT_WAVE%d" % (wave)]
+            wavelength = wavelengths['WAVE%d' % wave]['_wavelength']           
+            self.cur.execute('''
+              SELECT id FROM xia2_sweeps
+              WHERE xia2_sweeps.wavelength=%s
+              ''' %(wavelength))
+            sweep_pk = (self.cur.fetchone())[0]
+            # insert sweep_id column into table xia2_crystal        
+            self.cur.execute('''
+              INSERT INTO xia2_crystal (sweep_id) VALUES (%s)
+              ''' % (sweep_pk))
+            for stat, name in xia2_crystal_dict.items():
+              cell_list = result[0]
+              cell = result[0][int(stat)]
+              self.cur.execute('''
+                UPDATE xia2_crystal SET %s = %s
+                WHERE sweep_id = %s
+                ''' % (name, cell, sweep_pk))
+            sg = scaler['_scalr_likely_spacegroups'][0]
+            sg = sg.replace(' ', '')
+            self.cur.execute('''
+              UPDATE xia2_crystal SET likely_sg="%s"
+              WHERE sweep_id = %s
+              ''' % (sg, sweep_pk))
 
 
 
+      self.handle.commit()
+      print('Data input for %s completed.' % (pdb_id))
 
 
-#    crystals = data['_crystals']
-#    data_type = None
-#    for name in crystals.keys():
-#      wavelengths = crystals[name]['_wavelengths'].keys()
-#      # identify SAD data
-#      if 'SAD' in wavelengths:
-#        assert data_type is None or data_type == 'SAD'
-#        data_type = 'SAD'
-#        for crystal_name in crystals.keys():
-#          # Get statistics and wavelengths
-#          crystal = crystals[crystal_name]
-#          if not '_scaler' in crystal or crystal['_scaler'] is None:
-#            continue
-#          scaler = crystal['_scaler']
-#          scalr_statistics = scaler['_scalr_statistics']
-#          wavelengths = crystal['_wavelengths']
-#          # Get the statistics and wavelength for the sweep
-#          result = scalr_statistics['["AUTOMATIC", "%s", "SAD"]' % crystal_name]
-#          wavelength = wavelengths['SAD']['_wavelength']   
-
-
-
-
-#    # get secondary key for sweep_id as sweep_pk  
-#    self.cur.execute('''
-#      SELECT id FROM xia2_sweeps WHERE xia2_sweeps.pdb_id_id="%s"
-#      ''' % (pdb_pk))
-#    sweep_pk = self.cur.fetchall()[-1][0]
-
-
-
-
-#    # enter crystal details into xia2_crystal
-#    self.cur.executescript( '''
-#      INSERT OR IGNORE INTO xia2_crystal
-#      (pdb_id_id)  SELECT id FROM pdb_id
-#      WHERE pdb_id.pdb_id="%s";
-#      '''% (pdb_pk))
     
-#    for name in xia2_crystal:
-#      self.cur.execute('''
-#        UPDATE xia2_crystal SET "%s" = "%s"
-#        WHERE pdb_id_id = "%s";
-#        ''' % (name, xia2_crystal[name], pdb_pk))
-    
     
     
     
@@ -462,7 +484,7 @@ class XIA2Parser(object):
 
 
 
-    self.handle.commit()
+    
     
     
 
