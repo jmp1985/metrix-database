@@ -47,16 +47,16 @@ class MetrixDB(object):
     parser = ProteinParser(self.handle)
     parser.add_entry(pdb_id, sequence)
 
-  def add_diff_exp_entry(self,
-                         pdb_id,
-                         xia2_txt_filename):
-    '''
-    Add a diffraction experiment entry to the database
-
-    '''
-    from metrix_db.parser.xia2_parser import XIA2Parser
-    parser = XIA2Parser(self.handle)
-    parser.add_entry(pdb_id, xia2_txt_filename)
+#  def add_diff_exp_entry(self,
+#                         pdb_id,
+#                         xia2_txt_filename):
+#    '''
+#    Add a diffraction experiment entry to the database
+#
+#    '''
+#    from metrix_db.parser.xia2_parser import XIA2Parser
+#    parser = XIA2Parser(self.handle)
+#    parser.add_entry(pdb_id, xia2_txt_filename)
 
 
   def write_csv(self, filename):

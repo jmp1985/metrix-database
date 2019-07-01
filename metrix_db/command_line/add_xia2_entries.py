@@ -63,12 +63,21 @@ with open('json_output.txt', 'w') as error_log: # Used for an error counting scr
       print("Skipping %s" % pdb_id)
       error_log.write('%s does not exist \n' % (xia2_txt))
       continue
+      
+ 
 
     if not exists(xia2_json):
       print("Skipping %s" % pdb_id)
       error_log.write('%s does not exist \n' % (xia2_json))
       continue
-
+    scaled = []
     # Add xia2 entry
-    print("Parsing %s" % pdb_id)
-    db.add_xia2_entry(pdb_id, xia2_txt, xia2_json)  
+    with open(xia2_txt) as infile:
+      for line in infile.readlines():
+        if line.startswith('mtz format'):
+          print("Parsing %s" % pdb_id)
+          db.add_xia2_entry(pdb_id, xia2_txt, xia2_json)
+        else:  
+          #print("Unsuccessful processing %s" % pdb_id)
+          error_log.write('%s unsuccessful processing \n' % (xia2_txt))
+          continue

@@ -129,10 +129,6 @@ class Initialiser(object):
           pdb_id_id INTEGER,
           FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );
-      CREATE TABLE diff_exp_stats (
-          pdb_id_id INTEGER,
-          FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
-      );
       CREATE TABLE anomalies_stats (
           pdb_id_id INTEGER,
           FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
