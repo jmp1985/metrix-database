@@ -16,7 +16,8 @@ setup(
       'bin/pdb_id_writer',
       'bin/initialise',
       'bin/add_pdb_entries',
-      'bin/add_xia2_entries'
+      'bin/add_xia2_entries',
+      'bin/add_sequence_entries'
     ],
     install_requires=[],
     classifiers=[

@@ -348,13 +348,6 @@ class XIA2Parser(object):
     elif crystal_columns > 1:
       pass
 
-#    # Find primary key for PDB in table PDB_id
-#    self.cur.execute('''
-#      SELECT id FROM PDB_id WHERE PDB_id.pdb_id="%s"
-#      ''' % (pdb_id))
-#    pdb_pk = self.cur.fetchone()[0]
-
-
     crystals = data['_crystals']
     data_type = None
     for name in crystals.keys():

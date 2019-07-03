@@ -54,8 +54,7 @@ class Initialiser(object):
       DROP TABLE IF EXISTS xia2_experiment;
       DROP TABLE IF EXISTS ep_stats;
       DROP TABLE IF EXISTS mr_stats;
-      DROP TABLE IF EXISTS protein_stats;
-      DROP TABLE IF EXISTS diff_exp_stats;
+      DROP TABLE IF EXISTS sequence_stats;
       DROP TABLE IF EXISTS anomalies_stats;
 
       CREATE TABLE pdb_id (
@@ -118,14 +117,14 @@ class Initialiser(object):
           FOREIGN KEY (sweep_id) REFERENCES sweep(id)
       );      
       CREATE TABLE ep_stats (
-          pdb_id_id INTEGER,
-          FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
+          sweep_id INTEGER,
+          FOREIGN KEY (sweep_id) REFERENCES sweep(id)
       );
       CREATE TABLE mr_stats (
           pdb_id_id INTEGER,
           FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );
-      CREATE TABLE protein_stats (
+      CREATE TABLE sequence_stats (
           pdb_id_id INTEGER,
           FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );
