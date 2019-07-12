@@ -17,9 +17,10 @@ setup(
       'bin/initialise',
       'bin/add_pdb_entries',
       'bin/add_xia2_entries',
-      'bin/add_sequence_entries'
+      'bin/add_sequence_entries',
+      'bin/add_matthews_stats'
     ],
-    install_requires=[],
+    install_requires=['procrunner'],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: BSD License",

@@ -1,0 +1,7 @@
+#!/bin/env python3
+
+from metrix_db.command_line import add_matthews_stats
+
+if __name__=='__main__':
+  add_matthews_stats
+

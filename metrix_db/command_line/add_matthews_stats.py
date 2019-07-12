@@ -2,7 +2,8 @@
 
 from metrix_db.initialise.database import MetrixDB
 from argparse import ArgumentParser
-from os.path import join, exists
+from os.path import join, exists, isdir
+from os import listdir
 
 # Create the argument parser
 parser = ArgumentParser(description='command line argument')
@@ -23,14 +24,6 @@ parser.add_argument(
   help    = "A file containing a list of PDB ids",
   default = None)
 
-# The directory for files
-parser.add_argument(
-  '--directory',
-  dest    = 'directory',
-  type    = str,
-  help    = 'the PDB coordinates directory',
-  default = '')
-
 # Parse the arguments
 args = parser.parse_args()
 
@@ -50,10 +43,8 @@ pdb_id_list = list(set(pdb_id_list))
 # Initialise the database
 db = MetrixDB()
 
-# Loop through the pdbs and add each entry to the database
+# Loop through the pdbs and add protein details for each entry to the database
 for pdb_id in pdb_id_list:
-  filename = join(args.directory, "%s.pdb" % pdb_id)
-  if not exists(filename):
-    print('Skipping non existent file: %s' % filename)
-    continue
-  db.add_pdb_entry(pdb_id, filename)
+  print("Parsing %s" % pdb_id)
+  db.add_matthews_stats(pdb_id)
+

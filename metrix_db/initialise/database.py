@@ -47,6 +47,17 @@ class MetrixDB(object):
     parser = SequenceParser(self.handle)
     parser.add_entry(pdb_id, sequence)
 
+  def add_matthews_stats(self,
+                        pdb_id):
+    '''
+    Add a Matthews coefficient details to the database
+
+    '''
+    from metrix_db.parser.matth_stat_parser import MatthStatParser
+    parser = MatthStatParser(self.handle)
+    parser.add_entry(pdb_id)
+
+
   def write_csv(self, filename):
     '''
     Write a CSV file from the database
