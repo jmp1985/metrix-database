@@ -325,6 +325,10 @@ class XIA2Parser(object):
                             '0' : 'first_image',
                             '1' : 'last_image'
                             }
+    xia2_transmission_dict = {
+                              '0'  : 'transmission'
+                              }
+
 
     # Checking whether tabels exist; if yes then just update; if no enter column
     # labels    
@@ -344,7 +348,12 @@ class XIA2Parser(object):
       for stat, name in xia2_imagerange_dict.items():        
         self.cur.executescript('''
           ALTER TABLE xia2_experiment ADD "%s" TEXT;
+          ''' % (name))
+      for stat, name in xia2_transmission_dict.items():        
+        self.cur.executescript('''
+          ALTER TABLE xia2_experiment ADD "%s" TEXT;
           ''' % (name))          
+    
     elif crystal_columns > 1:
       pass
 
@@ -383,6 +392,12 @@ class XIA2Parser(object):
           integrater = sweep_info[key]['_integrater']
           image_set = integrater['_fp_imageset']
           scan = image_set['scan']
+          beam = image_set['beam']
+          transmission = beam['transmission']
+          self.cur.execute('''
+            UPDATE xia2_experiment SET transmission="%s"
+            WHERE sweep_id = %s
+            ''' % (transmission, sweep_pk))
           expo_time = scan['exposure_time'][0]
           self.cur.execute('''
             UPDATE xia2_experiment SET exposure_time_sec="%s"
@@ -441,7 +456,6 @@ class XIA2Parser(object):
               integrater = sweep_info[key]['_integrater']
               scan_name = integrater['_intgr_dname']
               if str(scan_name) == 'WAVE%s' %wave:
-                #print(scan_name, wave_name)
                 self.cur.execute('''
                   SELECT id FROM xia2_sweeps
                   WHERE xia2_sweeps.wavelength=%s
@@ -455,6 +469,12 @@ class XIA2Parser(object):
                 image_set = integrater['_fp_imageset']
                 scan = image_set['scan']
                 expo_time = scan['exposure_time'][0]
+                beam = image_set['beam']
+                transmission = beam['transmission']
+                self.cur.execute('''
+                  UPDATE xia2_experiment SET transmission="%s"
+                  WHERE sweep_id = %s
+                  ''' % (transmission, sweep_pk))                
                 self.cur.execute('''
                   UPDATE xia2_experiment SET exposure_time_sec="%s"
                   WHERE sweep_id = %s
