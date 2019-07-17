@@ -18,7 +18,8 @@ setup(
       'bin/add_pdb_entries',
       'bin/add_xia2_entries',
       'bin/add_sequence_entries',
-      'bin/add_matthews_stats'
+      'bin/add_matthews_stats',
+      'bin/add_mr_stats'
     ],
     install_requires=['procrunner'],
     classifiers=[

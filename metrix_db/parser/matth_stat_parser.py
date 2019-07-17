@@ -5,7 +5,7 @@ from metrix_db.util.run_matthews import MattCoeff as matt
 
 class MatthStatParser(object):
   '''
-  A class to parse protein information
+  A class to Matthews coefficient statistics and additional protein information
 
   '''
   def __init__(self, handle):

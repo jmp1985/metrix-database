@@ -57,6 +57,17 @@ class MetrixDB(object):
     parser = MatthStatParser(self.handle)
     parser.add_entry(pdb_id)
 
+  def add_mr_stats(self,
+                   pdb_id,
+                   log_file, sol_file):
+    '''
+    Add a MR details to the database
+
+    '''
+    from metrix_db.parser.mr_parser import MRParser
+    parser = MRParser(self.handle)
+    parser.add_entry(pdb_id, log_file, sol_file)
+
 
   def write_csv(self, filename):
     '''
