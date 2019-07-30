@@ -23,6 +23,15 @@ parser.add_argument(
   help    = "A file containing a list of PDB ids",
   default = None)
 
+# Allow a list of model and pdb
+parser.add_argument(
+  '--mr_list',
+  dest    = 'mr_list',
+  type    = str,
+  help    = "A file containing a list of model/PDB pairs",
+  default = None)
+
+
 # The directory for files
 parser.add_argument(
   '--directory',
@@ -51,44 +60,10 @@ pdb_id_list = list(set(pdb_id_list))
 db = MetrixDB()
 
 
-with open('json_output.txt', 'w') as error_log: # Used for an error counting script
-  for pdb_id in pdb_id_list:
-    xia2dir = join(args.directory, pdb_id)
-    xia2_txt = join(xia2dir, 'xia2.txt')
-    xia2_json = join(xia2dir, 'xia2.json')
-
-    # If files doen't exist then skip
-    if not exists(xia2_txt):
-      print("Skipping %s" % pdb_id)
-      error_log.write('%s does not exist \n' % (xia2_txt))
-      continue
-      
- 
-
-    if not exists(xia2_json):
-      print("Skipping %s" % pdb_id)
-      error_log.write('%s does not exist \n' % (xia2_json))
-      continue
-    scaled = []
-    # Add xia2 entry
-    with open(xia2_txt) as infile:
-      for line in infile.readlines():
-        if line.startswith('mtz format'):
-          print("Parsing %s" % pdb_id)
-          db.add_xia2_entry(pdb_id, xia2_txt, xia2_json)
-        else:  
-          #print("Unsuccessful processing %s" % pdb_id)
-          error_log.write('%s unsuccessful processing \n' % (xia2_txt))
-          continue
-
-
-
-
-
-
 # Loop through the pdbs and add protein details for each entry to the database
 for pdb_id in pdb_id_list:
   phasing_dir = join(args.directory, "%s" %pdb_id)
+  model_list = args.mr_list
   sol_file = join(phasing_dir, "PHASER.sol")
   log_file = join(phasing_dir, "MR_output.txt")
   if not exists(sol_file):
@@ -96,4 +71,4 @@ for pdb_id in pdb_id_list:
     continue
   if not exists(log_file):
     print("Skipping non existent file %s for %s" % (log_file, pdb_id))
-  db.add_mr_stats(pdb_id, log_file, sol_file)
+  db.add_mr_stats(pdb_id, log_file, sol_file, model_list)
