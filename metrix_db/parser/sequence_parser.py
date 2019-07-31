@@ -78,7 +78,6 @@ class SequenceParser(object):
         if line.startswith('>%s' %pdb_id):
           break
         else:
-          print(line)
           line_stripped = line.rstrip('\n')
           for letter in line_stripped:
             if letter in aa_atom_dict:
@@ -92,9 +91,6 @@ class SequenceParser(object):
     mw_chain = mw_chain + 18
     atom_num = sum(atom_sum)
     atom_num = atom_num + 3
-    print('Number of atoms for %s : %s' %(pdb_id, atom_num) )
-    print('Molecular weight for %s : %s' %(pdb_id, mw_chain))
-    print('Expected number of sites for %s : %s' %(pdb_id, sites_count))
 
     protein_data = {
              'No_atom_chain' : atom_num,
@@ -135,11 +131,6 @@ class SequenceParser(object):
      
     self.handle.commit()
 
- 
-
-
-
-
 ################################################################################
 
   def add_entry(self, pdb_id, sequence):
@@ -147,4 +138,3 @@ class SequenceParser(object):
     Add protein details to database
     '''
     self._sequence_analysis(pdb_id, sequence)
-

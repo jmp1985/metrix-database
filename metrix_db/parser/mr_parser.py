@@ -131,7 +131,6 @@ class MRParser(object):
             WHERE pdb_id_id = "%s";
             ''' % (data, mr_stats_dict[data], pdb_pk ))
 
-#      self.handle.commit()
 
     with open(model_list, 'r') as infile:
       for line in infile:

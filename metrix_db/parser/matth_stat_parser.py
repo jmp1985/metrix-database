@@ -26,11 +26,6 @@ class MatthStatParser(object):
     print('Calculating Matthews coefficient stats for %s' %pdb_id)
     # Inserts acquired information into relevant tables
     # Inserts pdb_id
-    self.cur.executescript( '''
-      INSERT OR IGNORE INTO sequence_stats
-      (pdb_id_id) SELECT id FROM PDB_id
-      WHERE PDB_id.pdb_id="%s";
-      ''' % (pdb_id))
 
     self.cur.execute('''
       SELECT id FROM PDB_id WHERE pdb_id="%s"

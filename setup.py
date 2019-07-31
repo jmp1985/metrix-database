@@ -18,6 +18,8 @@ setup(
         "bin/add_sequence_entries",
         "bin/add_matthews_stats",
         "bin/add_mr_stats",
+        "bin/add_ep_stats",
+        "bin/add_ai_labels",
     ],
     install_requires=["procrunner"],
     classifiers=[

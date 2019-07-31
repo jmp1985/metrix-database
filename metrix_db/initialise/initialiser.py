@@ -5,13 +5,11 @@ from os.path import exists
 class Initialiser(object):
   '''
   A class to initialise the database
-
   '''
 
   def __init__(self, overwrite=False):
     '''
     Get the database handle
-
     '''
 
     # Check if we need to init
@@ -30,7 +28,6 @@ class Initialiser(object):
   def _initialise(self):
     '''
     Initialise the table; do not add column labels yet
-
     '''
 
     # Get a cursor
@@ -56,7 +53,11 @@ class Initialiser(object):
       DROP TABLE IF EXISTS mr_stats;
       DROP TABLE IF EXISTS sequence_stats;
       DROP TABLE IF EXISTS anomalies_stats;
-
+      DROP TABLE IF EXISTS ep_ai_labels_pdb;
+      DROP TABLE IF EXISTS ep_ai_labels_sweep;
+      DROP TABLE IF EXISTS mr_ai_labels_pdb;
+      
+      
       CREATE TABLE pdb_id (
           id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
           pdb_id  TEXT UNIQUE,
@@ -117,8 +118,8 @@ class Initialiser(object):
           FOREIGN KEY (sweep_id) REFERENCES sweep(id)
       );      
       CREATE TABLE ep_stats (
-          sweep_id INTEGER,
-          FOREIGN KEY (sweep_id) REFERENCES sweep(id)
+          pdb_id_id INTEGER,
+          FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );
       CREATE TABLE mr_stats (
           pdb_id_id INTEGER,
@@ -129,6 +130,10 @@ class Initialiser(object):
           FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       );
       CREATE TABLE anomalies_stats (
+          pdb_id_id INTEGER,
+          FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
+      );
+      CREATE TABLE ep_ai_labels_pdb (
           pdb_id_id INTEGER,
           FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)
       )
