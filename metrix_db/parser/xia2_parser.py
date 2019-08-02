@@ -240,6 +240,70 @@ class XIA2Parser(object):
                     UPDATE xia2_datareduction_highres SET %s = %s
                     WHERE sweep_id = %s
                     ''' % (name, sanitize(high), sweep_pk))
+
+      # identify NATIVE data
+      elif 'NATIVE' in wavelengths:
+        print('Adding NATIVE data to xia2_datareduction tables')
+        assert data_type is None or data_type == 'NATIVE'
+        data_type = 'NATIVE'
+        for crystal_name in crystals.keys():
+          # Get statistics and wavelengths
+          crystal = crystals[crystal_name]
+          if not '_scaler' in crystal or crystal['_scaler'] is None:
+            continue
+          scaler = crystal['_scaler']
+          scalr_statistics = scaler['_scalr_statistics']
+          wavelengths = crystal['_wavelengths']
+          # Get the statistics and wavelength for the sweep
+          result = scalr_statistics['["AUTOMATIC", "%s", "NATIVE"]' % crystal_name]
+          wavelength = wavelengths['NATIVE']['_wavelength']       
+          # insert sweep_id into table xia2_sweeps
+          self.cur.execute('''
+            INSERT OR IGNORE INTO xia2_sweeps
+            (pdb_id_id) SELECT id FROM PDB_id
+            WHERE PDB_id.pdb_id="%s"
+            ''' % (pdb_id))
+          # get secondary key for sweep_id as sweep_pk  
+          self.cur.execute('''
+            SELECT id FROM xia2_sweeps WHERE xia2_sweeps.pdb_id_id="%s"
+            ''' % (pdb_pk))
+          sweep_pk = self.cur.fetchall()[-1][0]
+          # insert sweep_id column into overall, highres, lowres table          
+          for table in xia2_table_list:          
+            self.cur.execute('''
+              INSERT INTO %s (sweep_id) VALUES (%s)
+              ''' % (table, sweep_pk))
+          # insert wavelength into xia2_sweep for each sweep_id    
+          self.cur.execute('''
+            UPDATE xia2_sweeps SET wavelength = %s WHERE id = "%s"
+            ''' % (wavelength, sweep_pk))    
+          # loop through dictionary with column labels; find corresponding stats
+          # in JSON file  
+          for stat, name in processing_statistic_name_mapping.items():
+           if stat in result:
+              assert len(result[stat]) in [1, 3]
+              if len(result[stat]) == 3:
+                overall, low, high = result[stat]
+              else:
+                overall, low, high = result[stat][0], None, None
+              # update stats in xia2_datareduction_overall
+              if overall is not None:                
+                self.cur.execute('''
+                  UPDATE xia2_datareduction_overall SET %s = %s
+                  WHERE sweep_id = %s
+                  ''' % (name, sanitize(overall), sweep_pk))
+              # update stats in xia2_datareduction_lowres
+              if low is not None:
+                self.cur.execute('''
+                  UPDATE xia2_datareduction_lowres SET %s = %s
+                  WHERE sweep_id = %s
+                  ''' % (name, sanitize(low), sweep_pk))
+              # update stats in xia2_datareduction_highres 
+              if high is not None:
+                self.cur.execute('''
+                  UPDATE xia2_datareduction_highres SET %s = %s
+                  WHERE sweep_id = %s
+                  ''' % (name, sanitize(high), sweep_pk))
       else:
         return None
 ################################################################################
@@ -500,6 +564,68 @@ class XIA2Parser(object):
                   WHERE sweep_id = %s
                   ''' % (image_end, sweep_pk))
                
+      elif 'NATIVE' in wavelengths:
+        print('Adding NATIVE data to xia2_exiperiment')
+        self.cur.execute('''
+          SELECT id FROM PDB_id WHERE PDB_id.pdb_id="%s"
+          ''' % (pdb_id))
+        pdb_pk = self.cur.fetchone()[0]
+
+        # get secondary key for sweep_id as sweep_pk  
+        self.cur.execute('''
+          SELECT id FROM xia2_sweeps WHERE xia2_sweeps.pdb_id_id="%s"
+          ''' % (pdb_pk))
+        sweep_pk = self.cur.fetchall()[-1][0]
+        # insert sweep_id column into table xia2_crystal        
+        self.cur.execute('''
+          INSERT INTO xia2_experiment (sweep_id) VALUES (%s)
+          ''' % (sweep_pk))      
+        assert data_type is None or data_type == 'NATIVE'
+        data_type = 'NATIVE'
+        for crystal_name in crystals.keys():
+          # Get statistics and wavelengths
+          crystal = crystals[crystal_name]
+          if not '_scaler' in crystal or crystal['_scaler'] is None:
+            continue
+          scaler = crystal['_scaler']
+          sweep_handler =  scaler['_sweep_handler']
+          sweep_info = sweep_handler['_sweep_information']
+          key, value = list(sweep_info.items())[0]
+          integrater = sweep_info[key]['_integrater']
+          image_set = integrater['_fp_imageset']
+          scan = image_set['scan']
+          beam = image_set['beam']
+          transmission = beam['transmission']
+          self.cur.execute('''
+            UPDATE xia2_experiment SET transmission="%s"
+            WHERE sweep_id = %s
+            ''' % (transmission, sweep_pk))
+          expo_time = scan['exposure_time'][0]
+          self.cur.execute('''
+            UPDATE xia2_experiment SET exposure_time_sec="%s"
+            WHERE sweep_id = %s
+            ''' % (expo_time, sweep_pk))
+          oscil_range = scan['oscillation'][0]
+          self.cur.execute('''
+            UPDATE xia2_experiment SET oscill_range_deg="%s"
+            WHERE sweep_id = %s
+            ''' % (oscil_range, sweep_pk))
+          oscil_step = scan['oscillation'][1]
+          self.cur.execute('''
+            UPDATE xia2_experiment SET oscill_step_deg="%s"
+            WHERE sweep_id = %s
+            ''' % (oscil_step, sweep_pk))
+          image_start = scan['image_range'][0]
+          self.cur.execute('''
+            UPDATE xia2_experiment SET first_image="%s"
+            WHERE sweep_id = %s
+            ''' % (image_start, sweep_pk))
+          image_end = scan['image_range'][1]
+          self.cur.execute('''
+            UPDATE xia2_experiment SET last_image="%s"
+            WHERE sweep_id = %s
+            ''' % (image_end, sweep_pk))
+
       else:
         return
 
@@ -659,6 +785,53 @@ class XIA2Parser(object):
               UPDATE xia2_crystal SET xia2_cell_volume="%s"
               WHERE sweep_id = %s
               ''' % (volume, sweep_pk))
+
+      elif 'NATIVE' in wavelengths:
+        print('Adding NATIVE data to xia2_crystal')
+        self.cur.execute('''
+          SELECT id FROM pdb_id WHERE pdb_id="%s"
+          ''' % (pdb_id))
+        pdb_pk = (self.cur.fetchone())[0]
+        # get secondary key for sweep_id as sweep_pk  
+        self.cur.execute('''
+          SELECT id FROM xia2_sweeps WHERE xia2_sweeps.pdb_id_id="%s"
+          ''' % (pdb_pk))
+        sweep_pk = self.cur.fetchall()[-1][0]
+        # insert sweep_id column into table xia2_crystal        
+        self.cur.execute('''
+          INSERT INTO xia2_crystal (sweep_id) VALUES (%s)
+          ''' % (sweep_pk))      
+        assert data_type is None or data_type == 'NATIVE'
+        data_type = 'NATIVE'
+        for crystal_name in crystals.keys():
+          # Get statistics and wavelengths
+          crystal = crystals[crystal_name]
+          if not '_scaler' in crystal or crystal['_scaler'] is None:
+            continue
+          scaler = crystal['_scaler']
+          scalr_cell_dict = scaler['_scalr_cell_dict']
+          result = scalr_cell_dict['AUTOMATIC_DEFAULT_NATIVE'][0]
+          for stat, name in xia2_crystal_dict.items():
+            cell = result[int(stat)] 
+            if cell in result:
+              self.cur.execute('''
+                UPDATE xia2_crystal SET %s = %s
+                WHERE sweep_id = %s
+                ''' % (name, cell, sweep_pk))
+          sg = scaler['_scalr_likely_spacegroups'][0]
+          sg = sg.replace(' ', '')
+          self.cur.execute('''
+            UPDATE xia2_crystal SET likely_sg="%s"
+            WHERE sweep_id = %s
+            ''' % (sg, sweep_pk))
+          volume_dict = scalr_cell_dict['AUTOMATIC_DEFAULT_NATIVE'][2]
+          volume_entry = volume_dict['_cell_volume']
+          volume_list = volume_entry.split('(')
+          volume = volume_list[0]
+          self.cur.execute('''
+            UPDATE xia2_crystal SET xia2_cell_volume="%s"
+            WHERE sweep_id = %s
+            ''' % (volume, sweep_pk))
 
 ################################################################################
 
