@@ -95,15 +95,15 @@ class Initialiser(object):
       );
       CREATE TABLE xia2_datareduction_overall (
           sweep_id INTEGER,
-          FOREIGN KEY (sweep_id) REFERENCES sweep(id)
+          FOREIGN KEY (sweep_id) REFERENCES sweeps(id)
       );
       CREATE TABLE xia2_datareduction_lowres (
           sweep_id INTEGER,
-          FOREIGN KEY (sweep_id) REFERENCES SWEEP(id)
+          FOREIGN KEY (sweep_id) REFERENCES sweeps(id)
       );
       CREATE TABLE xia2_datareduction_highres (
           sweep_id INTEGER,
-          FOREIGN KEY (sweep_id) REFERENCES sweep(id)
+          FOREIGN KEY (sweep_id) REFERENCES sweeps(id)
       );
       CREATE TABLE xia2_software (
           pdb_id_id INTEGER,
@@ -111,12 +111,12 @@ class Initialiser(object):
       );
       CREATE TABLE xia2_experiment (
           sweep_id INTEGER,
-          FOREIGN KEY (sweep_id) REFERENCES sweep(id)
+          FOREIGN KEY (sweep_id) REFERENCES sweeps(id)
       );
       CREATE TABLE xia2_crystal (
           sweep_id INTEGER,
-          FOREIGN KEY (sweep_id) REFERENCES sweep(id)
-      );      
+          FOREIGN KEY (sweep_id) REFERENCES sweeps(id)
+      );
       CREATE TABLE ep_stats (
           pdb_id_id INTEGER,
           FOREIGN KEY (pdb_id_id) REFERENCES pdb_id(id)

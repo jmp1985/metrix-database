@@ -29,7 +29,7 @@ class MetrixDB(object):
                      xia2_txt,
                      xia2_json):
     '''
-    Add a xia2 entry to the database
+    Add a anomalous xia2 entry to the database
 
     '''
     from metrix_db.parser.xia2_parser import XIA2Parser
